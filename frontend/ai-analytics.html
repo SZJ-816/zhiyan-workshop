@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据分析 - WorkNest</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+.page-wrapper { max-width: 1400px; margin:0 auto; padding:24px 32px; }
+.page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+.page-header h1 { font-size:28px; font-weight:700; }
+.page-header a { color:var(--accent); text-decoration:none; font-size:14px; }
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
+.stat-card { background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:20px; text-align:center; transition:all .3s; }
+.stat-card:hover { border-color:var(--accent); }
+.stat-value { font-size:32px; font-weight:700; }
+.stat-label { font-size:13px; color:var(--text-muted); margin-top:4px; }
+.charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.chart-panel { background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:20px; }
+.chart-panel h3 { font-size:15px; font-weight:600; margin-bottom:8px; }
+.chart-box { height:340px; }
+.full-chart { height:400px; }
+.refresh-bar { display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+.refresh-bar button { padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:var(--card-bg); color:var(--text); cursor:pointer; font-size:13px; transition:all .2s; }
+.refresh-bar button:hover, .refresh-bar button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.insight-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+.insight-card { background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:20px; }
+.insight-card h4 { font-size:14px; font-weight:600; margin-bottom:12px; }
+.insight-item { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.insight-item:last-child { border-bottom:none; }
+.insight-item .key { color:var(--text-muted); }
+.insight-item .val { font-weight:600; }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>数据分析中心 <span style="font-size:12px;font-weight:400;color:#10b981;background:rgba(16,185,129,.1);padding:2px 10px;border-radius:20px;vertical-align:middle;margin-left:8px" id="dataBadge">⏳ 加载中...</span></h1>
+    <div>
+      <a href="index.html" style="margin-right:16px">返回工作台</a>
+      <span style="font-size:10px;color:var(--text-muted);opacity:.5;margin-right:12px" title="页面版本">v2026-06-28T18:53</span>
+      <button onclick="refreshAll()" style="padding:8px 20px;border-radius:10px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);cursor:pointer;font-size:13px">⟳ 刷新数据</button>
+    </div>
+  </div>
+
+  <div class="stats-row" id="statsRow"></div>
+
+  <div class="charts-grid">
+    <div class="chart-panel">
+      <h3>任务状态分布</h3>
+      <div class="chart-box" id="chartTaskStatus"></div>
+    </div>
+    <div class="chart-panel">
+      <h3>Bug 严重度分布</h3>
+      <div class="chart-box" id="chartBugSeverity"></div>
+    </div>
+    <div class="chart-panel">
+      <h3>项目进度概览</h3>
+      <div class="chart-box" id="chartProjectProgress"></div>
+    </div>
+    <div class="chart-panel">
+      <h3>近7天完成趋势</h3>
+      <div class="chart-box" id="chartTrend"></div>
+    </div>
+  </div>
+
+  <div class="insight-row">
+    <div class="insight-card" id="insightTasks">
+      <h4>任务分布 (按成员)</h4>
+      <div style="color:var(--text-muted);font-size:13px">加载中...</div>
+    </div>
+    <div class="insight-card" id="insightProjects">
+      <h4>项目健康度</h4>
+      <div style="color:var(--text-muted);font-size:13px">加载中...</div>
+    </div>
+  </div>
+
+  <div class="chart-panel" style="margin-top:20px">
+    <h3>AI 数据洞察摘要</h3>
+    <div id="insightsArea" style="padding:16px;font-size:14px;line-height:1.8;color:var(--text)">加载中...</div>
+  </div>
+</div>
+
+<script>
+(function(){if(!localStorage.getItem('wn_token'))window.location.href='/';})();
+
+const getToken = () => localStorage.getItem('wn_token') || '';
+const charts = {};
+let currentRange = '7d';
+console.log('[数据分析中心] v2026-06-28T18:53 已加载，等待API数据...');
+
+function initChart(id) {
+  const dom = document.getElementById(id);
+  if (!dom) return null;
+  if (charts[id]) charts[id].dispose();
+  const chart = echarts.init(dom);
+  charts[id] = chart;
+  return chart;
+}
+
+async function fetchStats() {
+  try {
+    const resp = await fetch('/api/dashboard/stats', {headers:{'Authorization':'Bearer '+getToken()}});
+    const json = await resp.json();
+    const d = json.data || json;
+    console.log('[数据分析中心] dashboard/stats 返回:', d.total_projects, '项目', d.total_tasks, '任务', d.total_bugs, 'Bug', d.total_users, '用户');
+    const row = document.getElementById('statsRow');
+    row.innerHTML = [
+      {v:d.total_projects||0, l:'项目总数', c:'#6366f1'},
+      {v:d.total_tasks||0, l:'任务总数', c:'#0ea5e9'},
+      {v:d.total_bugs||0, l:'Bug总数', c:'#f97316'},
+      {v:d.total_users||0, l:'团队人数', c:'#10b981'},
+    ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.c}">${s.v}</div><div class="stat-label">${s.l}</div></div>`).join('');
+    document.getElementById('dataBadge').textContent = d.total_tasks > 0 ? '✓ 实时数据' : '✗ 认证失败';
+    document.getElementById('dataBadge').style.color = d.total_tasks > 0 ? '#10b981' : '#ef4444';
+    document.getElementById('dataBadge').style.background = d.total_tasks > 0 ? 'rgba(16,185,129,.1)' : 'rgba(239,68,68,.1)';
+    return d;
+  } catch(e) {
+    console.error('[数据分析中心] dashboard/stats 错误:', e);
+    document.getElementById('dataBadge').textContent = '✗ API错误';
+    return {};
+  }
+}
+
+async function fetchInsights() {
+  try {
+    const resp = await fetch('/api/ai/insights');
+    const json = await resp.json();
+    if (!json.success) return;
+    const d = json.data;
+    console.log('[数据分析中心] insights 返回:', Object.values(d.task_distribution||{}).reduce((a,b)=>a+b,0), '任务分布,', Object.values(d.bug_severity_distribution||{}).reduce((a,b)=>a+b,0), 'Bug分布');
+
+    // === 1. Task Status Pie ===
+    const taskDist = d.task_distribution || {};
+    const taskLabels = {done:'已完成', doing:'进行中', todo:'待办', closed:'已关闭'};
+    const taskChart = initChart('chartTaskStatus');
+    if (taskChart) {
+      taskChart.setOption({
+        tooltip:{trigger:'item', formatter:'{b}: {c} ({d}%)'},
+        legend:{bottom:0, textStyle:{color:'#94a3b8',fontSize:11}},
+        color:['#10b981','#0ea5e9','#f59e0b','#94a3b8'],
+        series:[{
+          type:'pie', radius:['48%','72%'], center:['50%','45%'],
+          data: Object.entries(taskDist).map(([k,v])=>({name:taskLabels[k]||k, value:v})),
+          label:{color:'#94a3b8',fontSize:11},
+          emphasis:{itemStyle:{shadowBlur:10,shadowColor:'rgba(0,0,0,.2)'}}
+        }]
+      });
+    }
+
+    // === 2. Bug Severity Bar ===
+    const bugDist = d.bug_severity_distribution || {};
+    const sevLabels = {critical:'致命', major:'严重', normal:'一般', minor:'轻微'};
+    const bugChart = initChart('chartBugSeverity');
+    if (bugChart) {
+      const sevData = Object.entries(bugDist).map(([k,v]) => ({
+        name: sevLabels[k] || k, value: v,
+        itemStyle: {color: k==='critical'?'#ef4444':k==='major'?'#f97316':k==='normal'?'#f59e0b':'#94a3b8'}
+      }));
+      bugChart.setOption({
+        tooltip:{trigger:'axis'},
+        xAxis:{type:'category', data:sevData.map(d=>d.name), axisLabel:{color:'#94a3b8'}},
+        yAxis:{type:'value', axisLabel:{color:'#94a3b8'}},
+        series:[{
+          type:'bar', data:sevData.map(d=>({value:d.value,itemStyle:d.itemStyle})),
+          barWidth:'50%', borderRadius:[8,8,0,0],
+          label:{show:true, position:'top', color:'#94a3b8'}
+        }]
+      });
+    }
+
+    // === 3. Project Progress Bar (from dashboard) ===
+    fillProjectProgress();
+
+    // === 4. Tasks By Member ===
+    fillTaskDistribution();
+
+    // === 5. AI Insights Text ===
+    document.getElementById('insightsArea').innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <b>数据总览:</b><br>
+          用户: ${d.total_users||0} | 产品: ${d.total_products||0}<br>
+          项目: ${Object.values(d.project_status||{}).reduce((a,b)=>a+b,0)} (进行中${d.project_status?.doing||0}, 待启动${d.project_status?.waiting||0})
+        </div>
+        <div>
+          <b>任务分布:</b><br>
+          ${Object.entries(taskDist).map(([k,v])=>`${taskLabels[k]||k}: ${v}`).join(' | ')}
+        </div>
+        <div>
+          <b>Bug分布:</b><br>
+          ${Object.entries(bugDist).map(([k,v])=>`${sevLabels[k]||k}: ${v}`).join(' | ')}
+        </div>
+        <div>
+          <b>模型状态:</b><br>
+          ${d.total_tasks>0?'已基于真实数据训练':'数据不足'}
+        </div>
+      </div>
+    `;
+  } catch(e) { console.error(e); }
+}
+
+async function fillProjectProgress() {
+  try {
+    const resp = await fetch('/api/dashboard/stats', {headers:{'Authorization':'Bearer '+getToken()}});
+    const json = await resp.json();
+    const d = json.data || json;
+    const projects = d.project_progress || [];
+
+    const chart = initChart('chartProjectProgress');
+    if (chart && projects.length > 0) {
+      chart.setOption({
+        tooltip:{trigger:'axis', axisPointer:{type:'shadow'}},
+        grid:{left:120, right:40, top:10, bottom:20},
+        xAxis:{type:'value', max:100, axisLabel:{color:'#94a3b8', formatter:'{value}%'}},
+        yAxis:{type:'category', data:projects.map(p=>p.name).reverse(),
+          axisLabel:{color:'#94a3b8',fontSize:11, width:100, overflow:'truncate'}},
+        series:[{
+          type:'bar', data:projects.map(p=>p.progress).reverse(),
+          barWidth:'60%', borderRadius:[0,6,6,0],
+          itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[
+            {offset:0,color:'#6366f1'},{offset:1,color:'#0ea5e9'}
+          ])},
+          label:{show:true, position:'right', formatter:'{c}%', color:'#94a3b8',fontSize:11}
+        }]
+      });
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function fillTaskDistribution() {
+  try {
+    const resp = await fetch('/api/dashboard/stats', {headers:{'Authorization':'Bearer '+getToken()}});
+    const json = await resp.json();
+    const d = json.data || json;
+    const dist = d.task_distribution || {};
+    
+    const items = Object.entries(dist)
+      .filter(([,v]) => v > 0)
+      .sort(([,a],[,b]) => b - a);
+
+    document.getElementById('insightTasks').innerHTML = `
+      <h4>任务分布 (按成员)</h4>
+      ${items.map(([name,cnt]) => `
+        <div class="insight-item">
+          <span class="key">${name}</span>
+          <span class="val">${cnt} 个</span>
+        </div>
+      `).join('')}
+    `;
+
+    // Trend chart
+    const weekly = d.weekly_completed || [];
+    const trendChart = initChart('chartTrend');
+    if (trendChart && weekly.length > 0) {
+      trendChart.setOption({
+        tooltip:{trigger:'axis'},
+        legend:{data:['完成的任务','解决的Bug'], bottom:0, textStyle:{color:'#94a3b8',fontSize:11}},
+        grid:{left:50, right:20, top:20, bottom:40},
+        xAxis:{type:'category', data:weekly.map(w=>w.date), axisLabel:{color:'#94a3b8',fontSize:10}},
+        yAxis:{type:'value', axisLabel:{color:'#94a3b8'}},
+        series:[
+          {name:'完成的任务', type:'line', data:weekly.map(w=>w.tasks_done),
+            smooth:true, lineStyle:{color:'#0ea5e9'}, itemStyle:{color:'#0ea5e9'},
+            areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[
+              {offset:0,color:'rgba(14,165,233,.3)'},{offset:1,color:'rgba(14,165,233,0)'}
+            ])}},
+          {name:'解决的Bug', type:'line', data:weekly.map(w=>w.bugs_resolved),
+            smooth:true, lineStyle:{color:'#f97316'}, itemStyle:{color:'#f97316'},
+            areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[
+              {offset:0,color:'rgba(249,115,22,.3)'},{offset:1,color:'rgba(249,115,22,0)'}
+            ])}}
+        ]
+      });
+    }
+
+    // Project health
+    const projects = d.project_progress || [];
+    const statusLabels = {doing:'进行中', waiting:'待启动', done:'已完成', closed:'已关闭', suspended:'已暂停'};
+    document.getElementById('insightProjects').innerHTML = `
+      <h4>项目健康度 (${projects.length}个项目)</h4>
+      ${projects.map(p => `
+        <div class="insight-item">
+          <span class="key">${p.name}</span>
+          <span class="val" style="color:${p.progress>=50?'#10b981':p.progress>=25?'#f59e0b':'#ef4444'}">${p.progress}%</span>
+        </div>
+      `).join('')}
+    `;
+  } catch(e) { console.error(e); }
+}
+
+function refreshAll() {
+  fetchStats();
+  fetchInsights();
+}
+
+window.addEventListener('resize', () => Object.values(charts).forEach(c=>c.resize()));
+refreshAll();
+</script>
+</body>
+</html>

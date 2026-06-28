@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 工作助手 — WorkNest</title>
+<script>(function(){if(!localStorage.getItem('wn_token'))window.location.href='/';})();</script>
+<style>
+/* ===== 复用主站 CSS 变量 ===== */
+:root {
+  --primary: #0ea5e9; --primary-light: #38bdf8; --primary-dark: #0284c7;
+  --bg: #f0f4f8; --surface: #fff; --text: #1e293b; --text-secondary: #64748b;
+  --border: #e2e8f0; --radius: 14px; --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --danger: #ef4444; --success: #22c55e; --warning: #f59e0b;
+  --navy-dark: #0b1121; --navy: #111d36;
+}
+[data-theme="dark"] {
+  --bg: #0f172a; --surface: #1e293b; --text: #e2e8f0; --text-secondary: #94a3b8;
+  --border: #334155; --shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg); color: var(--text); min-height: 100vh; display: flex;
+}
+
+/* ===== Chat 全屏布局 ===== */
+.chat-container {
+  display: flex; flex-direction: column; height: 100vh; flex: 1;
+  max-width: 100%; margin-left: 220px;
+}
+
+/* Header */
+.chat-header {
+  display: flex; align-items: center; gap: 12px; padding: 14px 24px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.chat-header .logo {
+  width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7c3aed);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 18px; font-weight: 700;
+}
+.chat-header h1 { font-size: 18px; font-weight: 700; }
+.chat-header .badge {
+  font-size: 11px; padding: 2px 10px; border-radius: 20px;
+  background: linear-gradient(135deg, #7c3aed, #a855f7); color: #fff;
+  cursor: pointer; transition: all .2s;
+}
+.chat-header .badge:hover { opacity: .85; transform: scale(1.05); }
+.chat-header .spacer { flex: 1; }
+.chat-header .btn-icon {
+  width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-secondary); display: flex;
+  align-items: center; justify-content: center; cursor: pointer; transition: all .2s;
+}
+.chat-header .btn-icon:hover { border-color: var(--primary); color: var(--primary); background: rgba(14,165,233,.06); }
+
+/* Messages */
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px;
+  scroll-behavior: smooth;
+}
+.chat-messages::-webkit-scrollbar { width: 6px; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Welcome */
+.chat-welcome {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 200px; text-align: center; gap: 12px; margin: auto 0;
+}
+.chat-welcome .welcome-icon {
+  width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), #7c3aed);
+  border-radius: 20px; display: flex; align-items: center; justify-content: center;
+  font-size: 28px; color: #fff; margin-bottom: 4px;
+}
+.chat-welcome h2 { font-size: 22px; font-weight: 700; }
+.chat-welcome p { color: var(--text-secondary); font-size: 14px; max-width: 420px; }
+.quick-prompts {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; justify-content: center;
+}
+.quick-prompt {
+  padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); cursor: pointer; font-size: 13px;
+  transition: all .2s; white-space: nowrap;
+}
+.quick-prompt:hover { border-color: var(--primary); background: rgba(14,165,233,.06); color: var(--primary); }
+
+/* Message Bubbles */
+.message {
+  display: flex; gap: 10px; max-width: 80%; animation: fadeIn .3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.message.user { align-self: flex-end; flex-direction: row-reverse; }
+.message.assistant { align-self: flex-start; }
+.msg-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 600; color: #fff;
+}
+.msg-avatar.user { background: var(--primary); }
+.msg-avatar.assistant { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+.msg-content {
+  padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.65;
+  word-wrap: break-word; overflow-wrap: break-word;
+}
+.message.user .msg-content {
+  background: var(--primary); color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.message.assistant .msg-content {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-bottom-left-radius: 4px;
+}
+
+/* Markdown in messages */
+.msg-content h1, .msg-content h2, .msg-content h3 { font-size: 15px; margin: 8px 0 4px; font-weight: 700; }
+.msg-content ul, .msg-content ol { padding-left: 20px; margin: 4px 0; }
+.msg-content li { margin: 2px 0; }
+.msg-content code {
+  background: rgba(0,0,0,.08); padding: 2px 6px; border-radius: 4px;
+  font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px;
+}
+.msg-content pre {
+  background: #1e293b; color: #e2e8f0; padding: 12px 16px; border-radius: 10px;
+  overflow-x: auto; margin: 8px 0; font-size: 13px;
+}
+.msg-content pre code { background: none; padding: 0; color: inherit; }
+.msg-content table { border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+.msg-content th, .msg-content td { border: 1px solid var(--border); padding: 6px 12px; text-align: left; }
+.msg-content th { background: rgba(0,0,0,.04); font-weight: 600; }
+.msg-content blockquote {
+  border-left: 3px solid var(--primary); padding-left: 12px;
+  color: var(--text-secondary); margin: 6px 0; font-style: italic;
+}
+.msg-content strong { font-weight: 700; }
+.msg-content a { color: var(--primary); text-decoration: underline; }
+.message.user .msg-content code { background: rgba(255,255,255,.2); }
+.message.user .msg-content pre { background: rgba(0,0,0,.3); }
+.message.user .msg-content a { color: #fff; }
+
+/* Typing indicator */
+.typing-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--text-secondary); animation: bounce 1.4s infinite; margin: 0 2px; }
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+
+/* Input */
+.chat-input-area { padding: 14px 24px; background: var(--surface); border-top: 1px solid var(--border); }
+.input-row { display: flex; gap: 10px; align-items: flex-end; }
+.chat-textarea {
+  flex: 1; padding: 10px 16px; border-radius: 14px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font-size: 14px; font-family: inherit;
+  resize: none; outline: none; transition: border .2s; min-height: 44px; max-height: 140px;
+  line-height: 1.5;
+}
+.chat-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14,165,233,.15); }
+.send-btn {
+  width: 44px; height: 44px; border-radius: 14px; border: none;
+  background: linear-gradient(135deg, var(--primary), #7c3aed);
+  color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .2s; flex-shrink: 0;
+}
+.send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(14,165,233,.35); }
+.send-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.send-btn svg { width: 20px; height: 20px; }
+
+/* Sidebar */
+.sidebar {
+  width: 220px; background: var(--navy-dark); color: #fff; height: 100vh;
+  position: fixed; left: 0; top: 0; display: flex; flex-direction: column;
+  z-index: 100; overflow-y: auto;
+}
+.sidebar-header {
+  padding: 18px 16px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.sidebar-header .s-logo {
+  width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), #7c3aed);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px;
+}
+.sidebar-header span { font-weight: 700; font-size: 15px; }
+.sidebar-nav { padding: 8px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.sidebar-nav a {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px;
+  color: rgba(255,255,255,.7); text-decoration: none; font-size: 13px; font-weight: 500;
+  transition: all .15s; cursor: pointer;
+}
+.sidebar-nav a:hover { background: rgba(255,255,255,.08); color: #fff; }
+.sidebar-nav a.active { background: rgba(14,165,233,.18); color: var(--primary-light); }
+.nav-divider { height: 1px; background: rgba(255,255,255,.08); margin: 4px 12px; }
+.nav-section { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; padding: 8px 12px 2px; color: rgba(255,255,255,.35); font-weight: 600; }
+
+/* ===== Key 管理弹窗 ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 999;
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn .2s ease;
+}
+.modal-panel {
+  background: var(--surface); border-radius: 16px; padding: 28px; width: 520px; max-width: 90vw;
+  max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  border: 1px solid var(--border);
+}
+.modal-panel h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--border);
+  color: var(--text-secondary); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: var(--danger); color: #fff; }
+
+.key-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.key-card {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px;
+  border: 1px solid var(--border); transition: all .2s; cursor: pointer;
+}
+.key-card:hover { border-color: var(--primary); }
+.key-card.active { border-color: var(--primary); background: rgba(14,165,233,.06); }
+.key-card .key-radio {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .2s;
+}
+.key-card.active .key-radio { border-color: var(--primary); }
+.key-card.active .key-radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+.key-info { flex: 1; min-width: 0; }
+.key-info .key-name { font-size: 14px; font-weight: 600; }
+.key-info .key-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.key-del {
+  width: 28px; height: 28px; border-radius: 8px; border: none; background: transparent;
+  color: var(--text-secondary); cursor: pointer; flex-shrink: 0; font-size: 14px;
+  transition: all .2s; display: flex; align-items: center; justify-content: center;
+}
+.key-del:hover { background: rgba(239,68,68,.1); color: var(--danger); }
+
+.add-key-form { display: none; flex-direction: column; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.add-key-form.show { display: flex; }
+.add-key-form input {
+  padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--bg); color: var(--text); font-size: 13px;
+}
+.add-key-form input:focus { outline: none; border-color: var(--primary); }
+.form-row { display: flex; gap: 8px; }
+.form-row input { flex: 1; }
+
+.btn-sm {
+  padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer; transition: all .2s;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-outline {
+  background: transparent; border: 1px solid var(--border); color: var(--text);
+  display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center;
+}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { width: 60px; }
+  .sidebar-header span, .sidebar-nav a span:not(.nav-icon), .nav-section, .nav-divider { display: none; }
+  .sidebar-nav a { justify-content: center; padding: 12px; }
+  .chat-container { margin-left: 60px; }
+  .message { max-width: 95%; }
+}
+</style>
+</head>
+<body>
+
+<!-- 侧边栏 -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="s-logo">W</div>
+    <span>WorkNest</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="/"><svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> 仪表盘</a>
+    <a href="/"><svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> 项目</a>
+    <a href="/"><svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> 任务</a>
+    <a href="/"><svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Bug</a>
+    <div class="nav-divider"></div>
+    <div class="nav-section">AI 工作台</div>
+    <a class="active"><svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="13" cy="10" r="1" fill="currentColor"/><circle cx="17" cy="10" r="1" fill="currentColor"/></svg> AI 对话</a>
+    <a href="/ai-analytics"><svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 数据分析</a>
+    <a href="/ai-prediction"><svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> AI 预测</a>
+  </nav>
+</aside>
+
+<!-- 主体 -->
+<div class="chat-container">
+  <header class="chat-header">
+    <div class="logo">AI</div>
+    <h1>智能工作助手</h1>
+    <span class="badge" id="modelBadge" onclick="openKeyModal()" title="切换 API Key">MiniMax M2.7</span>
+    <div class="spacer"></div>
+    <button class="btn-icon" onclick="openKeyModal()" title="API Key 管理">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </header>
+
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-welcome" id="chatWelcome">
+      <div class="welcome-icon">🧠</div>
+      <h2>你好，我是 WorkNest AI 助手</h2>
+      <p>我可以帮你分析项目进度、解读数据、拆解任务、排查 Bug。试试下面的快捷提问吧 👇</p>
+      <div class="quick-prompts" id="quickPrompts">
+        <span class="quick-prompt" data-prompt="分析当前项目整体健康状况">📊 项目健康分析</span>
+        <span class="quick-prompt" data-prompt="根据平台数据生成本周工作报告">📝 本周工作报告</span>
+        <span class="quick-prompt" data-prompt="帮我分析最近常见的Bug类型和修复建议">🐛 Bug 趋势分析</span>
+        <span class="quick-prompt" data-prompt="任务延期了怎么办？给出3条应对策略">⚠️ 风险评估建议</span>
+        <span class="quick-prompt" data-prompt="如何提升团队开发效率？">🚀 效率提升方案</span>
+        <span class="quick-prompt" data-prompt="帮我写一个项目管理最佳实践文档">📋 最佳实践</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input-area">
+    <div class="input-row">
+      <textarea class="chat-textarea" id="chatInput" placeholder="输入你的问题，按 Enter 发送..." rows="1" onkeydown="handleKeyDown(event)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Key 管理弹窗 -->
+<div class="modal-overlay" id="keyModal" style="display:none" onclick="if(event.target===this)closeKeyModal()">
+  <div class="modal-panel">
+    <h3>🔑 API Key 管理 <button class="modal-close" onclick="closeKeyModal()">✕</button></h3>
+    <div class="key-list" id="keyList"></div>
+    <button class="btn-sm btn-outline" onclick="toggleAddKey()" id="addKeyBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      添加 API Key
+    </button>
+    <div class="add-key-form" id="addKeyForm">
+      <input type="text" id="newName" placeholder="名称，如 OpenAI GPT-4o">
+      <input type="text" id="newUrl" placeholder="API Base URL">
+      <input type="text" id="newKey" placeholder="API Key">
+      <input type="text" id="newModel" placeholder="模型名，如 gpt-4o">
+      <div class="form-row">
+        <input type="number" id="newTokens" placeholder="max_tokens" value="4096">
+        <input type="number" id="newTemp" placeholder="temperature" value="0.7" step="0.1" min="0" max="2">
+        <input type="number" id="newTopP" placeholder="top_p" value="0.95" step="0.05" min="0" max="1">
+      </div>
+      <button class="btn-sm btn-primary" onclick="saveNewKey()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 鉴权检查 =====
+(function() {
+  const t = localStorage.getItem('wn_token');
+  if (!t) { window.location.href = '/'; }
+})();
+
+// ===== 状态 =====
+const messages = [];
+let isStreaming = false;
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+const chatWelcome = document.getElementById('chatWelcome');
+
+// ===== 快捷提问 =====
+document.getElementById('quickPrompts').addEventListener('click', function(e) {
+  const el = e.target.closest('.quick-prompt');
+  if (!el) return;
+  chatInput.value = el.dataset.prompt;
+  sendMessage();
+});
+
+// ===== 键盘事件 =====
+function handleKeyDown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+// ===== 发送消息 =====
+async function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text || isStreaming) return;
+
+  // 隐藏欢迎页
+  if (chatWelcome) chatWelcome.style.display = 'none';
+
+  // 添加用户消息
+  addMessage('user', text);
+  messages.push({ role: 'user', content: text });
+  chatInput.value = '';
+  chatInput.style.height = 'auto';
+
+  // 添加 AI 占位
+  const aiMsg = addMessage('assistant', '', true);
+  isStreaming = true;
+  sendBtn.disabled = true;
+
+  try {
+    const token = localStorage.getItem('wn_token') || '';
+    const response = await fetch('/api/ai/chat/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ messages: messages.slice(-10), stream: true })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.detail || '请求失败');
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullContent = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n');
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.token) {
+              fullContent += parsed.token;
+              aiMsg.innerHTML = renderMarkdown(fullContent);
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+          } catch(e) {}
+        }
+      }
+    }
+
+    if (fullContent) {
+      messages.push({ role: 'assistant', content: fullContent });
+    } else {
+      aiMsg.textContent = 'AI 助手暂时无法回应，请稍后再试。';
+    }
+  } catch(e) {
+    aiMsg.innerHTML = '<span style="color:var(--danger)">⚠️ 请求失败：' + e.message + '</span>';
+  } finally {
+    isStreaming = false;
+    sendBtn.disabled = false;
+    chatInput.focus();
+  }
+}
+
+// ===== 添加消息 =====
+function addMessage(role, content, isPlaceholder) {
+  const div = document.createElement('div');
+  div.className = 'message ' + role;
+
+  const avatar = role === 'user' ? '我' : 'AI';
+  const avatarClass = role === 'user' ? 'user' : 'assistant';
+
+  div.innerHTML = '<div class="msg-avatar ' + avatarClass + '">' + avatar + '</div>' +
+    '<div class="msg-content">' + (isPlaceholder ? '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>' : escapeHtml(content)) + '</div>';
+
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return div.querySelector('.msg-content');
+}
+
+// ===== 简易 Markdown 渲染 =====
+function renderMarkdown(text) {
+  if (!text) return '';
+  let html = escapeHtml(text)
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`{3}(\w*)\n?([\s\S]*?)`{3}/g, '<pre><code>$2</code></pre>')
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+  return html;
+}
+
+function escapeHtml(text) {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return text.replace(/[&<>"']/g, c => map[c]);
+}
+
+// ===== API Key 管理 =====
+async function fetchKeys() {
+  const token = localStorage.getItem('wn_token') || '';
+  try {
+    const resp = await fetch('/api/ai/keys', { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    return data.keys || [];
+  } catch(e) { return []; }
+}
+
+async function switchKey(keyId) {
+  const token = localStorage.getItem('wn_token') || '';
+  try {
+    const resp = await fetch('/api/ai/keys/switch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ key_id: keyId })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      document.getElementById('modelBadge').textContent = data.name;
+      renderKeyList();
+    }
+  } catch(e) { alert('切换失败: ' + e.message); }
+}
+
+async function deleteKey(keyId) {
+  if (!confirm('确定删除这个 API Key？')) return;
+  const token = localStorage.getItem('wn_token') || '';
+  try {
+    const resp = await fetch('/api/ai/keys/' + keyId, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await resp.json();
+    if (data.success) {
+      document.getElementById('modelBadge').textContent = data.new_current;
+      renderKeyList();
+    } else {
+      alert(data.error || '删除失败');
+    }
+  } catch(e) { alert('删除失败: ' + e.message); }
+}
+
+async function saveNewKey() {
+  const token = localStorage.getItem('wn_token') || '';
+  const name = document.getElementById('newName').value.trim();
+  const url = document.getElementById('newUrl').value.trim();
+  const key = document.getElementById('newKey').value.trim();
+  const model = document.getElementById('newModel').value.trim();
+  if (!name || !url || !key || !model) { alert('所有字段必填'); return; }
+
+  try {
+    const resp = await fetch('/api/ai/keys/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({
+        name, base_url: url, api_key: key, model,
+        max_tokens: +document.getElementById('newTokens').value || 4096,
+        temperature: +document.getElementById('newTemp').value || 0.7,
+        top_p: +document.getElementById('newTopP').value || 0.95
+      })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      // Clear form
+      ['newName','newUrl','newKey','newModel'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('addKeyForm').classList.remove('show');
+      document.getElementById('addKeyBtn').style.display = '';
+      renderKeyList();
+    }
+  } catch(e) { alert('添加失败: ' + e.message); }
+}
+
+function toggleAddKey() {
+  const form = document.getElementById('addKeyForm');
+  form.classList.toggle('show');
+  if (form.classList.contains('show')) {
+    document.getElementById('addKeyBtn').style.display = 'none';
+  }
+}
+
+async function openKeyModal() {
+  document.getElementById('keyModal').style.display = 'flex';
+  await renderKeyList();
+}
+
+function closeKeyModal() {
+  document.getElementById('keyModal').style.display = 'none';
+}
+
+async function renderKeyList() {
+  const keys = await fetchKeys();
+  const container = document.getElementById('keyList');
+  container.innerHTML = keys.map(k => `
+    <div class="key-card${k.is_active ? ' active' : ''}" onclick="switchKey('${k.id}')">
+      <div class="key-radio"></div>
+      <div class="key-info">
+        <div class="key-name">${escapeHtml(k.name)}</div>
+        <div class="key-meta">${escapeHtml(k.model)} · ${escapeHtml(k.api_key_prefix)}</div>
+      </div>
+      <button class="key-del" onclick="event.stopPropagation();deleteKey('${k.id}')" title="删除">🗑</button>
+    </div>
+  `).join('');
+}
+
+// 页面加载时获取当前 key 名称
+(async function(){
+  const keys = await fetchKeys();
+  const active = keys.find(k => k.is_active);
+  if (active) document.getElementById('modelBadge').textContent = active.name;
+})();
+</script>
+</body>
+</html>

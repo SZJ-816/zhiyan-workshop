@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkNest 服务管理 · 一键启动面板</title>
+<style>
+  :root {
+    --bg: #f5f7fa; --card: #fff; --text: #1a2332; --sub: #8696a7;
+    --border: #e6ebf0; --blue: #0ea5e9; --blue2: #0284c7;
+    --green: #10b981; --red: #ef4444; --amber: #f59e0b;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  }
+  [data-theme="dark"] {
+    --bg: #0f172a; --card: #1e293b; --text: #e2e8f0; --sub: #94a3b8;
+    --border: #334155; --shadow: 0 1px 3px rgba(0,0,0,.3);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100vh;
+    transition: background .3s, color .3s;
+  }
+
+  /* === Header === */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px; background: var(--card);
+    border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .topbar-brand { display: flex; align-items: center; gap: 14px; }
+  .topbar-logo {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .topbar-logo svg { width: 22px; height: 22px; }
+  .topbar-title { font-size: 18px; font-weight: 700; letter-spacing: -.3px; }
+  .topbar-sub { font-size: 11px; color: var(--sub); margin-left: 8px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .btn-enter {
+    padding: 8px 20px; border-radius: 8px; background: var(--blue); color: #fff;
+    font-size: 13px; font-weight: 600; text-decoration: none; transition: .2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-enter:hover { background: var(--blue2); transform: translateY(-1px); }
+  .btn-theme {
+    width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--card); cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 16px; transition: .2s;
+  }
+  .btn-theme:hover { background: var(--border); }
+
+  /* === Container === */
+  .container { max-width: 1260px; margin: 0 auto; padding: 28px 40px 40px; }
+
+  /* === Status Overview Bar === */
+  .status-bar {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px;
+  }
+  .status-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 22px; display: flex; align-items: center; gap: 14px;
+    transition: .2s; box-shadow: var(--shadow);
+  }
+  .status-item:hover { transform: translateY(-2px); }
+  .status-dot {
+    width: 44px; height: 44px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+  }
+  .status-dot.green { background: #d1fae5; color: #059669; }
+  .status-dot.red { background: #fee2e2; color: #dc2626; }
+  .status-dot.blue { background: #e0f2fe; color: #0284c7; }
+  .status-dot.amber { background: #fef3c7; color: #d97706; }
+  .status-val { font-size: 26px; font-weight: 700; line-height: 1; }
+  .status-lbl { font-size: 12px; color: var(--sub); margin-top: 2px; }
+
+  /* === Section Header === */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+  }
+  .section-title { font-size: 17px; font-weight: 700; }
+  .section-actions { display: flex; gap: 10px; }
+  .btn-all {
+    padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; border: none; transition: .2s; display: flex; align-items: center; gap: 6px;
+  }
+  .btn-all.start { background: #10b981; color: #fff; }
+  .btn-all.start:hover { background: #059669; }
+  .btn-all.stop { background: #ef4444; color: #fff; }
+  .btn-all.stop:hover { background: #dc2626; }
+  .btn-all.restart { background: var(--blue); color: #fff; }
+  .btn-all.restart:hover { background: var(--blue2); }
+  .btn-all:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* === Service Table (zbox style) === */
+  .service-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    background: var(--card); border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+  }
+  .service-table thead th {
+    text-align: left; padding: 14px 20px; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px; color: var(--sub);
+    background: rgba(0,0,0,.015); border-bottom: 1px solid var(--border);
+  }
+  .service-table tbody td { padding: 15px 20px; vertical-align: middle; }
+  .service-table tbody tr { transition: background .15s; }
+  .service-table tbody tr:hover { background: rgba(0,0,0,.02); }
+  .service-table tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+
+  .svc-status-indicator {
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .svc-led {
+    width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+    animation: none; position: relative;
+  }
+  .svc-led.running {
+    background: #10b981;
+    box-shadow: 0 0 12px rgba(16,185,129,.5);
+    animation: ledPulse 2s infinite;
+  }
+  .svc-led.stopped { background: #ef4444; }
+  .svc-led.unknown { background: #94a3b8; }
+  @keyframes ledPulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(16,185,129,.4); }
+    50% { box-shadow: 0 0 20px rgba(16,185,129,.8); }
+  }
+  .svc-status-text { font-size: 13px; font-weight: 500; }
+  .svc-status-text.running { color: #059669; }
+  .svc-status-text.stopped { color: #dc2626; }
+
+  .svc-name-cell { display: flex; align-items: center; gap: 12px; }
+  .svc-icon {
+    width: 36px; height: 36px; border-radius: 10px; display: flex;
+    align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+    background: #f1f5f9;
+  }
+  [data-theme="dark"] .svc-icon { background: #1e293b; }
+  .svc-info { line-height: 1.35; }
+  .svc-title { font-size: 14px; font-weight: 600; }
+  .svc-desc { font-size: 11px; color: var(--sub); }
+
+  .svc-port { font-family: "SF Mono", "Cascadia Code", monospace; font-size: 13px; color: var(--blue); }
+  .svc-tier {
+    font-size: 11px; padding: 2px 10px; border-radius: 20px;
+    background: #f1f5f9; color: #64748b; font-weight: 500;
+  }
+  [data-theme="dark"] .svc-tier { background: #334155; }
+
+  .svc-actions { display: flex; gap: 6px; }
+  .svc-btn {
+    width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: all .2s; background: var(--card);
+  }
+  .svc-btn.play { color: #10b981; border-color: #10b981; }
+  .svc-btn.play:hover { background: #d1fae5; }
+  .svc-btn.pause { color: #ef4444; border-color: #ef4444; }
+  .svc-btn.pause:hover { background: #fee2e2; }
+  .svc-btn.reload { color: var(--blue); border-color: var(--blue); }
+  .svc-btn.reload:hover { background: #e0f2fe; }
+  .svc-btn.log { color: #64748b; border-color: #64748b; }
+  .svc-btn.log:hover { background: #f1f5f9; }
+  .svc-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .svc-btn:disabled:hover { background: var(--card); }
+
+  /* === Log / Resource Panel === */
+  .dual-panel {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px;
+  }
+  .panel-box {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    overflow: hidden; box-shadow: var(--shadow);
+  }
+  .panel-box-header {
+    padding: 14px 20px; font-size: 14px; font-weight: 600;
+    border-bottom: 1px solid var(--border); display: flex;
+    align-items: center; justify-content: space-between;
+  }
+  .panel-box-body { padding: 16px 20px; }
+  .log-viewer {
+    font-family: "SF Mono", "Cascadia Code", "Fira Code", monospace;
+    font-size: 12px; line-height: 1.8; max-height: 280px; overflow-y: auto;
+    background: #0b1121; color: #a5f3fc; border-radius: 8px; padding: 14px 16px;
+  }
+  .log-entry { white-space: pre-wrap; word-break: break-all; }
+  .log-time { color: #64748b; }
+  .log-ok { color: #6ee7b7; }
+  .log-err { color: #fca5a5; }
+  .log-warn { color: #fbbf24; }
+
+  .resource-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .resource-item {
+    padding: 16px; border: 1px solid var(--border); border-radius: 10px; text-align: center;
+  }
+  .resource-val { font-size: 32px; font-weight: 700; }
+  .resource-val.green { color: #10b981; }
+  .resource-val.amber { color: #f59e0b; }
+  .resource-val.red { color: #ef4444; }
+  .resource-lbl { font-size: 12px; color: var(--sub); margin-top: 4px; }
+  .resource-bar {
+    height: 8px; border-radius: 4px; background: #e5e7eb; margin-top: 10px; overflow: hidden;
+  }
+  [data-theme="dark"] .resource-bar { background: #334155; }
+  .resource-bar-fill { height: 100%; border-radius: 4px; transition: width .6s; }
+
+  .footer {
+    text-align: center; padding: 24px; color: var(--sub); font-size: 11px;
+    border-top: 1px solid var(--border); margin-top: 28px;
+  }
+
+  @media (max-width: 900px) {
+    .status-bar { grid-template-columns: repeat(3, 1fr); }
+    .dual-panel { grid-template-columns: 1fr; }
+    .service-table { font-size: 12px; }
+    .container { padding: 16px; }
+    .topbar { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- === Top Bar === -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+        <rect x="3" y="3" width="18" height="18" rx="4"/>
+        <path d="M8 12h8M12 8v8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="topbar-title">WorkNest</span>
+    <span class="topbar-sub">服务管理面板</span>
+  </div>
+  <div class="topbar-right">
+    <a href="index.html" class="btn-enter">进入工作台 →</a>
+    <button class="btn-theme" onclick="toggleTheme()" title="切换深色/浅色">🌓</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- === Status Overview === -->
+  <div class="status-bar" id="statusBar"></div>
+
+  <!-- === Service List === -->
+  <div class="section-header">
+    <span class="section-title">服务实例管理</span>
+    <div class="section-actions">
+      <button class="btn-all start" onclick="controlAll('start')" id="btnAllStart">▶ 一键启动全部</button>
+      <button class="btn-all restart" onclick="controlAll('restart')" id="btnAllRestart">↻ 全部重启</button>
+      <button class="btn-all stop" onclick="controlAll('stop')" id="btnAllStop">■ 全部停止</button>
+    </div>
+  </div>
+
+  <table class="service-table">
+    <thead>
+      <tr>
+        <th style="width:40px"></th>
+        <th>服务名称</th>
+        <th>分类</th>
+        <th>端口</th>
+        <th style="width:140px">操作</th>
+      </tr>
+    </thead>
+    <tbody id="serviceList"></tbody>
+  </table>
+
+  <!-- === Log + Resource === -->
+  <div class="dual-panel">
+    <div class="panel-box">
+      <div class="panel-box-header">
+        运行日志
+        <div style="display:flex;gap:6px">
+          <button onclick="refreshLogs()" style="border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;background:var(--card);color:var(--text)">刷新</button>
+          <button onclick="clearLogs()" style="border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;background:var(--card);color:var(--text)">清空</button>
+        </div>
+      </div>
+      <div class="panel-box-body">
+        <div class="log-viewer" id="logPanel"><span class="log-time">等待日志...</span></div>
+      </div>
+    </div>
+
+    <div class="panel-box">
+      <div class="panel-box-header">服务器资源</div>
+      <div class="panel-box-body">
+        <div class="resource-grid" id="resourcePanel"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">WorkNest 服务管理面板 v2.0 · 一键管控所有容器服务 · 192.168.146.128</div>
+
+<script>
+const API = '/api/launcher';
+const servicesDef = [
+  { id:'nginx',         name:'Nginx',          desc:'Web服务器 · 反向代理',             tier:'接入层',  port:80,    icon:'🌐' },
+  { id:'fastapi',       name:'FastAPI',        desc:'应用服务 · REST API',              tier:'应用层',  port:8000,  icon:'⚡' },
+  { id:'mysql',         name:'MySQL',          desc:'关系型数据库',                     tier:'存储层',  port:3306,  icon:'💾' },
+  { id:'postgres',      name:'PostgreSQL',     desc:'数据仓库 · 分析型数据库',           tier:'存储层',  port:5432,  icon:'🐘' },
+  { id:'redis',         name:'Redis',          desc:'缓存服务 · 消息代理',               tier:'存储层',  port:6379,  icon:'⚡' },
+  { id:'zookeeper',     name:'ZooKeeper',      desc:'分布式协调 · Kafka依赖',           tier:'大数据',  port:2181,  icon:'🐾' },
+  { id:'kafka',         name:'Apache Kafka',   desc:'消息队列 · 事件流',               tier:'大数据',  port:9092,  icon:'📨' },
+  { id:'spark_master',  name:'Spark Master',   desc:'批处理引擎 · 主节点',             tier:'大数据',  port:7077,  icon:'⚙️' },
+  { id:'spark_worker',  name:'Spark Worker',   desc:'批处理引擎 · 工作节点',           tier:'大数据',  port:8081,  icon:'🔧' },
+  { id:'flink_jm',      name:'Flink JobMgr',   desc:'流处理引擎 · 调度器',             tier:'大数据',  port:8083,  icon:'🌊' },
+  { id:'flink_tm',      name:'Flink TaskMgr',  desc:'流处理引擎 · 执行器',             tier:'大数据',  port:null,   icon:'💧' },
+  { id:'ai_model',      name:'AI模型服务',      desc:'Scikit-learn · 预测推理',         tier:'AI层',    port:null,   icon:'🧠' },
+];
+
+let svcData = [];
+
+// === Theme ===
+function initTheme() {
+  const s = localStorage.getItem('worknest_theme');
+  if (s === 'dark') document.documentElement.setAttribute('data-theme','dark');
+  else if (s === 'light') document.documentElement.setAttribute('data-theme','light');
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const nxt = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', nxt);
+  localStorage.setItem('worknest_theme', nxt);
+}
+
+// === Fetch Services ===
+async function loadServices() {
+  try {
+    const r = await fetch(API + '/services');
+    if (r.ok) svcData = await r.json();
+    else throw new Error('API err');
+  } catch(e) {
+    svcData = servicesDef.map(s => ({ ...s, status: 'unknown', uptime: '-' }));
+  }
+  renderAll();
+}
+
+function mergeSvc(def, data) {
+  const d = data || {};
+  return { ...def, status: d.status || 'unknown', uptime: d.uptime || '-', cpu: d.cpu || '-', mem: d.mem || '-' };
+}
+
+// === Render ===
+function renderAll() {
+  const merged = servicesDef.map(s => {
+    const match = svcData.find(x => x.id === s.id);
+    return mergeSvc(s, match);
+  });
+
+  // Status bar
+  const running = merged.filter(s => s.status === 'running').length;
+  const stopped = merged.filter(s => s.status === 'stopped').length;
+  const total = merged.length;
+
+  document.getElementById('statusBar').innerHTML = `
+    <div class="status-item"><div class="status-dot green">🟢</div><div><div class="status-val">${running}</div><div class="status-lbl">运行中</div></div></div>
+    <div class="status-item"><div class="status-dot red">🔴</div><div><div class="status-val">${stopped}</div><div class="status-lbl">已停止</div></div></div>
+    <div class="status-item"><div class="status-dot blue">📦</div><div><div class="status-val">${total}</div><div class="status-lbl">服务总数</div></div></div>
+    <div class="status-item"><div class="status-dot amber">🕐</div><div><div class="status-val" id="uptimeCount">--</div><div class="status-lbl">持续运行</div></div></div>
+    <div class="status-item"><div class="status-dot blue">📊</div><div><div class="status-val" id="loadDisplay">--</div><div class="status-lbl">系统负载</div></div></div>
+  `;
+
+  // Update uptime
+  const upCount = merged.filter(s => s.status === 'running' && s.uptime).length;
+  document.getElementById('uptimeCount').textContent = upCount + ' 个';
+
+  // Service table
+  document.getElementById('serviceList').innerHTML = merged.map(s => {
+    const statusLabel = s.status === 'running' ? '运行中' : s.status === 'stopped' ? '已停止' : '未知';
+    return `<tr>
+      <td style="text-align:center">
+        <span class="svc-led ${s.status}"></span>
+      </td>
+      <td>
+        <div class="svc-name-cell">
+          <div class="svc-icon">${s.icon}</div>
+          <div class="svc-info">
+            <div class="svc-title">${s.name}</div>
+            <div class="svc-desc">${s.desc}</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="svc-tier">${s.tier}</span></td>
+      <td><span class="svc-port">${s.port ? ':' + s.port : '-'}</span></td>
+      <td>
+        <div class="svc-actions">
+          <button class="svc-btn play" ${s.status==='running'?'disabled':''} onclick="ctrlSvc('${s.id}','start')" title="启动">▶</button>
+          <button class="svc-btn pause" ${s.status!=='running'?'disabled':''} onclick="ctrlSvc('${s.id}','stop')" title="停止">■</button>
+          <button class="svc-btn reload" ${s.status!=='running'?'disabled':''} onclick="ctrlSvc('${s.id}','restart')" title="重启">↻</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Buttons state
+  const canStart = merged.some(s => s.status !== 'running');
+  const canStop = merged.some(s => s.status === 'running');
+  document.getElementById('btnAllStart').disabled = !canStart;
+  document.getElementById('btnAllStop').disabled = !canStop;
+  document.getElementById('btnAllRestart').disabled = !canStop;
+}
+
+// === Control ===
+async function ctrlSvc(id, action) {
+  try {
+    const r = await fetch(API + '/services/' + id + '/' + action, { method: 'POST' });
+    if (r.ok) { addLog('ok', `${action} ${id} 成功`); await loadServices(); }
+    else { addLog('err', `${action} ${id} 失败`); }
+  } catch(e) { addLog('err', `${action} ${id}: ${e.message}`); }
+}
+
+async function controlAll(action) {
+  const label = action === 'start' ? '启动' : action === 'stop' ? '停止' : '重启';
+  if (!confirm(`确认 ${label} 全部服务？`)) return;
+  const merged = servicesDef.map(s => {
+    const m = svcData.find(x => x.id === s.id);
+    return mergeSvc(s, m);
+  });
+  for (const s of merged) {
+    if (action === 'start' && s.status === 'running') continue;
+    if (action === 'stop' && s.status !== 'running') continue;
+    await ctrlSvc(s.id, action);
+  }
+}
+
+// === Logs ===
+function addLog(level, msg) {
+  const t = new Date().toLocaleTimeString();
+  const cls = level === 'ok' ? 'log-ok' : level === 'err' ? 'log-err' : level === 'warn' ? 'log-warn' : 'log-time';
+  const el = document.getElementById('logPanel');
+  el.innerHTML = `<div class="log-entry"><span class="log-time">[${t}]</span> <span class="${cls}">${msg}</span></div>` + el.innerHTML;
+}
+
+async function refreshLogs() {
+  try {
+    const r = await fetch(API + '/logs?lines=50');
+    if (r.ok) {
+      const data = await r.json();
+      document.getElementById('logPanel').innerHTML = (data.logs || []).map(l =>
+        `<div class="log-entry"><span class="log-time">[${l.time}]</span> <span class="log-${l.level || 'ok'}">${l.msg}</span></div>`
+      ).join('') || '<span class="log-time">暂无日志</span>';
+    }
+  } catch(e) { addLog('warn', '无法获取日志: ' + e.message); }
+}
+
+function clearLogs() {
+  document.getElementById('logPanel').innerHTML = '<span class="log-time">日志已清空</span>';
+}
+
+// === Resources ===
+async function fetchResources() {
+  try {
+    const r = await fetch(API + '/resources');
+    if (!r.ok) return;
+    const d = await r.json();
+    document.getElementById('loadDisplay').textContent = d.cpu_percent + '%';
+    document.getElementById('resourcePanel').innerHTML = `
+      <div class="resource-item">
+        <div class="resource-val ${d.cpu_percent > 80 ? 'red' : d.cpu_percent > 50 ? 'amber' : 'green'}">${d.cpu_percent}%</div>
+        <div class="resource-lbl">CPU 使用率</div>
+        <div class="resource-bar"><div class="resource-bar-fill" style="width:${d.cpu_percent}%;background:${d.cpu_percent>80?'#ef4444':d.cpu_percent>50?'#f59e0b':'#10b981'}"></div></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-val ${d.mem_percent > 80 ? 'red' : d.mem_percent > 50 ? 'amber' : 'green'}">${d.mem_percent}%</div>
+        <div class="resource-lbl">内存使用率</div>
+        <div class="resource-bar"><div class="resource-bar-fill" style="width:${d.mem_percent}%;background:${d.mem_percent>80?'#ef4444':d.mem_percent>50?'#f59e0b':'#10b981'}"></div></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-val ${d.disk_percent > 80 ? 'red' : d.disk_percent > 50 ? 'amber' : 'green'}">${d.disk_percent}%</div>
+        <div class="resource-lbl">磁盘使用率</div>
+        <div class="resource-bar"><div class="resource-bar-fill" style="width:${d.disk_percent}%;background:${d.disk_percent>80?'#ef4444':d.disk_percent>50?'#f59e0b':'#10b981'}"></div></div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-val green">${d.mem_total || '--'}</div>
+        <div class="resource-lbl">总内存</div>
+        <div class="resource-bar"><div class="resource-bar-fill" style="width:${d.mem_percent}%;background:#0ea5e9"></div></div>
+      </div>
+    `;
+  } catch(e) {}
+}
+
+// === Init ===
+initTheme();
+loadServices().then(() => { refreshLogs(); fetchResources(); });
+setInterval(loadServices, 8000);
+setInterval(fetchResources, 15000);
+</script>
+</body>
+</html>

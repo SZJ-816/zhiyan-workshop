@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实时监控 - WorkNest</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.page-wrapper { max-width: 1400px; margin:0 auto; padding:24px 32px; }
+.page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+.page-header h1 { font-size:28px; font-weight:700; }
+.page-header a { color:var(--accent); text-decoration:none; font-size:14px; }
+.status-bar { display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+.status-item { flex:1; min-width:200px; padding:16px 20px; background:var(--card-bg); border:1px solid var(--border); border-radius:14px; display:flex; align-items:center; gap:12px; }
+.status-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.status-dot.online { background:#10b981; box-shadow:0 0 10px rgba(16,185,129,.5); animation:glow 2s infinite; }
+@keyframes glow { 0%,100%{box-shadow:0 0 6px rgba(16,185,129,.4)} 50%{box-shadow:0 0 16px rgba(16,185,129,.8)} }
+.status-dot.offline { background:#ef4444; }
+.status-dot.checking { background:#f59e0b; animation:blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.status-info { flex:1; }
+.status-info .name { font-size:14px; font-weight:600; }
+.status-info .detail { font-size:12px; color:var(--text-muted); margin-top:2px; }
+.metrics-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
+.metric-card { background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:20px; }
+.metric-card h4 { font-size:13px; color:var(--text-muted); margin-bottom:8px; }
+.metric-value { font-size:28px; font-weight:700; }
+.events-panel { background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:20px; }
+.events-panel h3 { font-size:15px; font-weight:600; margin-bottom:12px; }
+.event-list { max-height:450px; overflow-y:auto; }
+.event-item { padding:12px 16px; border-radius:10px; border:1px solid var(--border); margin-bottom:8px; display:flex; gap:12px; align-items:flex-start; background:var(--bg); transition:all .3s; }
+.event-item.new { animation:slideIn .3s ease; background:rgba(14,165,233,.05); }
+@keyframes slideIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+.event-icon { font-size:18px; flex-shrink:0; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+.event-icon.task { background:rgba(14,165,233,.12); }
+.event-icon.bug { background:rgba(239,68,68,.12); }
+.event-icon.pipe { background:rgba(16,185,129,.12); }
+.event-content { flex:1; }
+.event-content .title { font-size:14px; font-weight:500; }
+.event-content .meta { font-size:12px; color:var(--text-muted); margin-top:2px; }
+.event-time { font-size:11px; color:var(--text-muted); white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>实时监控 <span style="font-size:12px;font-weight:400;color:#10b981;background:rgba(16,185,129,.1);padding:2px 10px;border-radius:20px;vertical-align:middle;margin-left:8px" id="dataBadge">⏳ 连接中...</span></h1>
+    <div style="display:flex;gap:12px;align-items:center">
+      <span id="pollStatus" style="font-size:12px;color:var(--text-muted)">监控中...</span>
+      <span style="font-size:10px;color:var(--text-muted);opacity:.5" title="页面版本">v2026-06-28T18:53</span>
+      <a href="index.html">返回工作台</a>
+    </div>
+  </div>
+
+  <!-- 大数据组件状态 -->
+  <div class="status-bar" id="statusBar"></div>
+
+  <!-- 实时指标 -->
+  <div class="metrics-row" id="metricsRow"></div>
+
+  <!-- 实时事件流 -->
+  <div class="events-panel">
+    <h3>实时数据流 Feed</h3>
+    <div class="event-list" id="eventList">
+      <div class="event-item" style="justify-content:center;color:var(--text-muted)">等待首次数据拉取...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){if(!localStorage.getItem('wn_token'))window.location.href='/';})();
+
+const getToken = () => localStorage.getItem('wn_token') || '';
+let prevTaskCount = 0, prevBugCount = 0;
+console.log('[实时监控] v2026-06-28T18:53 已加载，启动实时数据轮询...');
+
+async function checkServices() {
+  // 1. Pipeline status - 真实TCP探测
+  let svc = {};
+  try {
+    const resp = await fetch('/api/ai/pipeline-status');
+    const json = await resp.json();
+    svc = json.services || {};
+  } catch(e) {}
+
+  const services = [
+    {
+      key: 'kafka', name: 'Kafka 消息队列',
+      onlineText: `${(svc.kafka?.topics||[]).length} topics | 端口9092`,
+      offlineText: '无法连接'
+    },
+    {
+      key: 'spark', name: 'Spark 批处理',
+      onlineText: `Master:7077 ${svc.spark?.webui_8080?'WebUI:8080':''}`,
+      offlineText: '无法连接'
+    },
+    {
+      key: 'flink', name: 'Flink 流计算',
+      onlineText: `JobManager:6123 ${svc.flink?.webui_8081?'WebUI:8081':''}`,
+      offlineText: '无法连接'
+    },
+    {
+      key: 'model', name: 'AI 预测模型',
+      onlineText: svc.model?.detail || '就绪',
+      offlineText: '模型未加载'
+    },
+  ];
+
+  document.getElementById('statusBar').innerHTML = services.map(s => {
+    const online = svc[s.key]?.status === 'online';
+    const cls = online ? 'online' : 'offline';
+    const detail = online ? s.onlineText : s.offlineText;
+    return `<div class="status-item">
+      <div class="status-dot ${cls}"></div>
+      <div class="status-info">
+        <div class="name">${s.name}</div>
+        <div class="detail">${detail}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadMetrics() {
+  try {
+    const resp = await fetch('/api/dashboard/stats', {headers:{'Authorization':'Bearer '+getToken()}});
+    const json = await resp.json();
+    const d = json.data || json;
+    console.log('[实时监控] dashboard/stats 返回:', d.total_tasks, '任务', d.total_bugs, 'Bug', (d.project_progress||[]).length, '项目');
+
+    // Detect changes for animation
+    const taskDelta = (d.total_tasks||0) - prevTaskCount;
+    const bugDelta = (d.total_bugs||0) - prevBugCount;
+    prevTaskCount = d.total_tasks||0;
+    prevBugCount = d.total_bugs||0;
+
+    document.getElementById('metricsRow').innerHTML = [
+      {label:'任务总数', value:d.total_tasks||0, sub:`进行中 ${d.active_tasks||0}`, color:'#0ea5e9'},
+      {label:'已完成任务', value:d.completed_tasks||0, sub:`完成率 ${d.total_tasks?(d.completed_tasks/d.total_tasks*100).toFixed(0):0}%`, color:'#10b981'},
+      {label:'未解决Bug', value:d.active_bugs||0, sub:`已解决 ${d.resolved_bugs||0}`, color:'#f97316'},
+      {label:'活跃项目', value:d.total_projects||0, sub:`${d.total_users||0} 用户`, color:'#6366f1'},
+    ].map(m => `<div class="metric-card"><h4>${m.label}</h4><div class="metric-value" style="color:${m.color}">${m.value}</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">${m.sub}</div></div>`).join('');
+
+    const badge = document.getElementById('dataBadge');
+    if (d.total_tasks > 0) { badge.textContent = '✓ 实时数据'; badge.style.color='#10b981'; badge.style.background='rgba(16,185,129,.1)'; }
+    else { badge.textContent = '✗ 认证失败'; badge.style.color='#ef4444'; badge.style.background='rgba(239,68,68,.1)'; }
+
+    // Build real-time feed from real data
+    const events = [];
+    const now = new Date().toLocaleTimeString();
+
+    // Project progress events
+    (d.project_progress||[]).forEach(p => {
+      events.push({
+        icon: p.status==='done'?'✅':'📊', type:'pipe',
+        title: `${p.name}: 进度 ${p.progress}% (${p.done}/${p.total})`,
+        meta: `来源: 禅道项目数据`,
+        time: now,
+      });
+    });
+
+    // Bug summary
+    if (d.bug_severity) {
+      const sevText = Object.entries(d.bug_severity)
+        .map(([k,v]) => `${k}:${v}`).join(' | ');
+      events.push({
+        icon:'🐛', type:'bug',
+        title: `Bug严重度分布: ${sevText}`,
+        meta: `来源: 禅道Bug表`,
+        time: now,
+      });
+    }
+
+    // Task distribution
+    const taskUsers = d.task_distribution || {};
+    const topUser = Object.entries(taskUsers)
+      .filter(([,v]) => v > 0)
+      .sort(([,a],[,b]) => b - a)[0];
+    if (topUser) {
+      events.push({
+        icon:'👤', type:'task',
+        title: `任务最多: ${topUser[0]} (${topUser[1]}个任务)`,
+        meta: `来源: 禅道任务表`,
+        time: now,
+      });
+    }
+
+    // Weekly trend
+    if (d.weekly_completed && d.weekly_completed.length > 0) {
+      const latest = d.weekly_completed[d.weekly_completed.length - 1];
+      const totalWeek = d.weekly_completed.reduce((s,i) => s + i.tasks_done, 0);
+      events.push({
+        icon:'📈', type:'pipe',
+        title: `近7天完成任务: ${totalWeek} 个`,
+        meta: `最近 (${latest.date}): ${latest.tasks_done}任务/${latest.bugs_resolved}Bug`,
+        time: now,
+      });
+    }
+
+    document.getElementById('eventList').innerHTML = events.map((item,i) => `
+      <div class="event-item new" style="animation-delay:${i*.08}s">
+        <div class="event-icon ${item.type}">${item.icon}</div>
+        <div class="event-content">
+          <div class="title">${item.title}</div>
+          <div class="meta">${item.meta}</div>
+        </div>
+        <div class="event-time">${item.time}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('pollStatus').textContent = '监控活跃 | ' + now;
+  } catch(e) {
+    document.getElementById('pollStatus').textContent = 'API错误';
+  }
+}
+
+// Initial load
+checkServices();
+loadMetrics();
+
+// Poll every 8 seconds
+setInterval(checkServices, 8000);
+setInterval(loadMetrics, 8000);
+</script>
+</body>
+</html>

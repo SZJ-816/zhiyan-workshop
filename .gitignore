@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+venv/
+env/
+.env
+.env.*
+
+# Node
+node_modules/
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Docker volumes & data
+mysql_data/
+postgres_data/
+redis_data/
+spark_data/
+uploads/
+*.pkl
+*.joblib
+ai_models/
+
+# Deployment temp
+deploy_*.py
+nohup.out
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Zip/tar artifacts
+*.tar.gz
+*.zip
+*.7z
+
+# WorkBuddy
+.workbuddy/
