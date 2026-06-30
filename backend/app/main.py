@@ -4,7 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.core.database import init_db, SessionLocal
-from app.api.routers import auth, dashboard, products, projects, bugs, users, launcher, ai_prediction, ai_chat
+from app.api.routers import (
+    auth, dashboard, products, projects, bugs, users, launcher,
+    ai_prediction, ai_chat, innovation, data_assets, transformation
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -36,6 +39,9 @@ app.include_router(users.router)
 app.include_router(launcher.router)
 app.include_router(ai_prediction.router)
 app.include_router(ai_chat.router)
+app.include_router(innovation.router)
+app.include_router(data_assets.router)
+app.include_router(transformation.router)
 
 @app.get("/api/health")
 def health_check():

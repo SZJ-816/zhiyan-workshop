@@ -1,111 +1,4023 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="auto">
+<html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WorkNest - 智能项目协作平台</title>
-<link rel="stylesheet" href="css/style.css?v=20250628">
+<title>智研工坊 - 科技创新研发效能平台</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/innovation-lab.css?v=2.0.1">
+<style>
+/* 手绘 SVG 图标样式 */
+.stat-svg {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.stat-icon .stat-svg {
+  width: 24px;
+  height: 24px;
+}
+.feature-card-icon .stat-svg,
+.asset-icon .stat-svg {
+  width: 20px;
+  height: 20px;
+}
+/* 白色文字对比度保障 - 确保白色文字在任何情况下都可见 */
+.brand-icon {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+}
+.user-avatar {
+  background: linear-gradient(135deg, #60A5FA, #2563EB) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+.nav-badge {
+  background: linear-gradient(135deg, #2563EB, #3B82F6) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2) !important;
+}
+.innovation-score-card {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+.transformation-score-card {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+.score-label,
+.transformation-score-label {
+  color: rgba(255, 255, 255, 0.85) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  font-weight: 500 !important;
+}
+.score-value,
+.transformation-score-value {
+  color: #FFFFFF !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  font-weight: 700 !important;
+}
+.score-level,
+.transformation-score-level {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  font-weight: 600 !important;
+  backdrop-filter: blur(8px) !important;
+}
+.score-trend .score-trend-item {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+}
+.score-trend .score-trend-item span {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+.score-trend .score-trend-item strong {
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #60A5FA 100%) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
+}
+.btn-success {
+  background: linear-gradient(135deg, #059669, #10B981) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
+}
+.filter-btn.active {
+  background: linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #60A5FA 100%) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
+}
+.project-avatar {
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+.chat-avatar,
+.chat-message.ai .chat-message-avatar {
+  background: linear-gradient(135deg, #2563EB, #60A5FA) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+@keyframes typingBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+.time-filter-btn.active {
+  background: linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #60A5FA 100%) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
+  border-color: transparent !important;
+}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 </head>
 <body>
 
-<!-- 侧边导航 -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-brand">
-    <svg class="brand-icon" viewBox="0 0 40 40" fill="none">
-      <rect width="40" height="40" rx="12" fill="url(#brandGrad)"/>
-      <path d="M12 28V16l8 6 8-6v12" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <defs><linearGradient id="brandGrad" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#0ea5e9"/><stop offset="1" stop-color="#0284c7"/></linearGradient></defs>
-    </svg>
-    <div>
-      <div class="brand-name">WorkNest</div>
-      <div class="brand-sub">智能项目协作</div>
-    </div>
-  </div>
-
-  <nav class="sidebar-nav">
-    <a class="nav-item active" data-page="dashboard">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      仪表盘
-    </a>
-    <a class="nav-item" data-page="projects">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-      项目管理
-    </a>
-    <a class="nav-item" data-page="tasks">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-      任务管理
-    </a>
-    <a class="nav-item" data-page="products">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
-      产品管理
-    </a>
-    <a class="nav-item" data-page="bugs">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
-      缺陷管理
-    </a>
-    <a class="nav-item" data-page="users">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-      团队成员
-    </a>
-    <a class="nav-item" data-page="reports">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      数据报表
-    </a>
-  </nav>
-
-  <div class="nav-divider"><span>AI 工作台</span></div>
-  <nav class="sidebar-nav">
-    <a class="nav-item" data-page="ai-chat">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="13" cy="10" r="1" fill="currentColor"/><circle cx="17" cy="10" r="1" fill="currentColor"/></svg>
-      AI 对话
-    </a>
-    <a class="nav-item" data-page="ai-analytics">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h7"/><line x1="16" y1="5" x2="22" y2="5"/><polyline points="18 2 22 5 18 8"/></svg>
-      数据分析
-    </a>
-    <a class="nav-item" data-page="ai-prediction">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/></svg>
-      AI预测
-    </a>
-    <a class="nav-item" data-page="ai-realtime">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      实时监控
-    </a>
-    <a class="nav-item" data-page="ai-datamanage">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-      数据管理
-    </a>
-  </nav>
-
-  <div class="nav-divider"><span>系统</span></div>
-  <nav class="sidebar-nav">
-    <a class="nav-item" data-page="launcher">
-      <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      服务管理
-    </a>
-  </nav>
-
-  <div class="sidebar-footer">
-    <div class="sidebar-user" id="sidebarUserCard">
-      <div class="sidebar-avatar" id="sidebarAvatar">?</div>
-      <div class="sidebar-user-info">
-        <div class="sidebar-user-name" id="sidebarUserName">未登录</div>
-        <div class="sidebar-user-role" id="sidebarUserRole"></div>
+<div class="app-container">
+  <!-- 侧边栏 -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">研</div>
+      <div class="brand-text">
+        <div class="brand-name">智研工坊</div>
+        <div class="brand-sub">InnovationLab</div>
       </div>
     </div>
-    <button class="btn-logout" onclick="logout()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      退出登录
-    </button>
-  </div>
-</aside>
 
-<!-- 主内容 -->
-<main class="main-area" id="mainArea">
-  <div id="app"></div>
-</main>
+    <div class="sidebar-nav">
+      <div class="nav-section-title">工作台</div>
+      <a class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        创新驾驶舱
+      </a>
 
-<script src="js/app.js?v=20250628"></script>
+      <div class="nav-section-title">研发管理</div>
+      <a class="nav-item" data-page="projects" onclick="switchPage('projects')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+        </svg>
+        创新项目管理
+      </a>
+      <a class="nav-item" data-page="tasks" onclick="switchPage('tasks')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 11l3 3L22 4"/>
+          <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+        </svg>
+        研发任务协同
+      </a>
+      <a class="nav-item" data-page="bugs" onclick="switchPage('bugs')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22c4.97 0 9-4.03 9-9s-4.03-9-9-9-9 4.03-9 9 4.03 9 9 9z"/>
+          <path d="M12 8v8M8 12h8"/>
+        </svg>
+        质量缺陷中心
+        <span class="nav-badge">32</span>
+      </a>
+
+      <div class="nav-section-title">AI智能</div>
+      <a class="nav-item" data-page="ai-decision" onclick="switchPage('ai-decision')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+          <line x1="12" y1="22" x2="12" y2="15.5"/>
+          <polyline points="22 8.5 12 15.5 2 8.5"/>
+        </svg>
+        AI决策中心
+      </a>
+      <a class="nav-item" data-page="ai-assistant" onclick="switchPage('ai-assistant')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          <circle cx="9" cy="10" r="1" fill="currentColor"/>
+          <circle cx="13" cy="10" r="1" fill="currentColor"/>
+          <circle cx="17" cy="10" r="1" fill="currentColor"/>
+        </svg>
+        科研AI助手
+      </a>
+      <a class="nav-item" data-page="innovation" onclick="switchPage('innovation')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18h6"/>
+          <path d="M10 22h4"/>
+          <path d="M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z"/>
+        </svg>
+        创新能力评估
+      </a>
+
+      <div class="nav-section-title">数据要素</div>
+      <a class="nav-item" data-page="data-assets" onclick="switchPage('data-assets')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+        </svg>
+        数据要素中台
+      </a>
+      <a class="nav-item" data-page="transformation" onclick="switchPage('transformation')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+          <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
+          <polyline points="7.5 19.79 7.5 14.6 3 12"/>
+        </svg>
+        成果转化评估
+      </a>
+
+      <div class="nav-section-title">智能洞察</div>
+      <a class="nav-item" data-page="team-efficiency" onclick="switchPage('team-efficiency')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        团队效能分析
+      </a>
+      <a class="nav-item" data-page="knowledge-graph" onclick="switchPage('knowledge-graph')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <circle cx="19.4" cy="15" r="1.5"/>
+          <circle cx="4.6" cy="15" r="1.5"/>
+          <circle cx="12" cy="5" r="1.5"/>
+          <path d="M12 6.5V9"/>
+          <path d="M12 15v2.5"/>
+          <path d="M18 13.5l-2-1"/>
+          <path d="M8 12.5l-2 1"/>
+        </svg>
+        创新知识图谱
+      </a>
+      <a class="nav-item" data-page="realtime" onclick="switchPage('realtime')">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        实时监控看板
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar">管</div>
+        <div class="user-info">
+          <div class="user-name">管理员</div>
+          <div class="user-role">平台管理员</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 主内容区 -->
+  <main class="main-content">
+    <!-- 顶部导航 -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div>
+          <div class="page-title" id="pageTitle">创新驾驶舱</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-icon-btn" title="搜索">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <div class="topbar-icon-btn" title="通知">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 01-3.46 0"/>
+          </svg>
+          <span class="notification-dot"></span>
+        </div>
+        <div class="topbar-icon-btn" title="设置">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- 内容区 -->
+    <div class="content-wrapper">
+      <!-- 创新驾驶舱页面 -->
+      <div id="page-dashboard" class="page">
+        <div class="page-header">
+          <h1>创新驾驶舱</h1>
+          <p>全方位洞察研发效能与创新能力，数据驱动科技创新</p>
+        </div>
+
+        <!-- 核心指标卡片 -->
+        <div class="stat-cards">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon primary"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 014 12.7V17H8v-2.3A7 7 0 0112 2z"/></svg></div>
+              <div class="stat-trend up">↑ 5.2%</div>
+            </div>
+            <div class="stat-value">82.5</div>
+            <div class="stat-label">创新指数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon success"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+              <div class="stat-trend up">↑ 8.7%</div>
+            </div>
+            <div class="stat-value">76.3%</div>
+            <div class="stat-label">研发效能</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon info"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+              <div class="stat-trend up">↑ 2</div>
+            </div>
+            <div class="stat-value">10</div>
+            <div class="stat-label">创新项目</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon warning"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+              <div class="stat-trend up">↑ 12%</div>
+            </div>
+            <div class="stat-value">68%</div>
+            <div class="stat-label">成果转化率</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon primary"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+              <div class="stat-trend up">↑ 15%</div>
+            </div>
+            <div class="stat-value">110</div>
+            <div class="stat-label">研发任务</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon danger"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="9" rx="7" ry="5"/><path d="M9 14c0 2 1.3 3 3 3s3-1 3-3"/><circle cx="9" cy="8" r="1" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/><path d="M3 11l2-2m16 2l-2-2"/></svg></div>
+              <div class="stat-trend down">↓ 8%</div>
+            </div>
+            <div class="stat-value">32</div>
+            <div class="stat-label">待处理缺陷</div>
+          </div>
+        </div>
+
+        <!-- 第二行：创新雷达 + 数据资产 -->
+        <div class="grid-3" style="margin-bottom: 24px;">
+          <!-- 创新能力雷达图 -->
+          <div class="card col-span-2">
+            <div class="card-header">
+              <div class="card-title">创新能力雷达图</div>
+              <div>
+                <span class="tag tag-primary">综合评估</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="innovationRadarChart" class="chart-container" style="height: 320px;"></div>
+            </div>
+          </div>
+
+          <!-- 创新指数卡片 -->
+          <div class="innovation-score-card">
+            <div class="score-label">综合创新指数</div>
+            <div class="score-value">82.5</div>
+            <div class="score-level">优秀型 · Level 4</div>
+            <div class="score-trend">
+              <div class="score-trend-item">
+                <span>较上月</span>
+                <strong>+5.2%</strong>
+              </div>
+              <div class="score-trend-item">
+                <span>超越团队</span>
+                <strong>78%</strong>
+              </div>
+              <div class="score-trend-item">
+                <span>等级</span>
+                <strong>优秀</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 第三行：效能趋势 + 数据要素 -->
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <!-- 研发效能趋势 -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">研发效能趋势</div>
+              <div>
+                <button class="btn btn-sm btn-ghost time-filter-btn active" onclick="filterDashboardTime('7')">近7天</button>
+                <button class="btn btn-sm btn-ghost time-filter-btn" onclick="filterDashboardTime('30')">近30天</button>
+                <button class="btn btn-sm btn-ghost time-filter-btn" onclick="filterDashboardTime('90')">近90天</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="efficiencyTrendChart" class="chart-container" style="height: 280px;"></div>
+            </div>
+          </div>
+
+          <!-- 数据要素资产概览 -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">数据要素资产</div>
+              <a class="btn btn-sm btn-ghost" onclick="switchPage('data-assets')">查看全部 →</a>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="asset-card">
+                  <div class="asset-icon" style="background: #EFF6FF; color: #3B82F6;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+                  <div class="asset-info">
+                    <div class="asset-name">项目数据资产</div>
+                    <div class="asset-count">10 个</div>
+                  </div>
+                  <div class="asset-level">★★★★★</div>
+                </div>
+                <div class="asset-card">
+                  <div class="asset-icon" style="background: #ECFDF5; color: #10B981;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <div class="asset-info">
+                    <div class="asset-name">任务数据资产</div>
+                    <div class="asset-count">110 条</div>
+                  </div>
+                  <div class="asset-level">★★★★☆</div>
+                </div>
+                <div class="asset-card">
+                  <div class="asset-icon" style="background: #FEF2F2; color: #EF4444;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="9" rx="7" ry="5"/><path d="M9 14c0 2 1.3 3 3 3s3-1 3-3"/><circle cx="9" cy="8" r="1" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/><path d="M3 11l2-2m16 2l-2-2"/></svg></div>
+                  <div class="asset-info">
+                    <div class="asset-name">质量数据资产</div>
+                    <div class="asset-count">32 条</div>
+                  </div>
+                  <div class="asset-level">★★★★★</div>
+                </div>
+                <div class="asset-card">
+                  <div class="asset-icon" style="background: #FFFBEB; color: #F59E0B;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+                  <div class="asset-info">
+                    <div class="asset-name">人员数据资产</div>
+                    <div class="asset-count">15 人</div>
+                  </div>
+                  <div class="asset-level">★★★☆☆</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 第四行：重点项目 + AI预测 -->
+        <div class="grid-2">
+          <!-- 重点创新项目 -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">重点创新项目</div>
+              <a class="btn btn-sm btn-ghost" onclick="switchPage('projects')">全部项目 →</a>
+            </div>
+            <div class="card-body">
+              <div class="list-item">
+                <div class="list-avatar" style="background: #DBEAFE; color: #2563EB;">智能</div>
+                <div class="list-content">
+                  <div class="list-title">智能数据分析平台</div>
+                  <div class="list-desc">进行中 · 75% 完成 · 8人团队</div>
+                </div>
+                <div class="list-meta">
+                  <div class="list-time">高优先级</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <div class="list-avatar" style="background: #D1FAE5; color: #059669;">云原</div>
+                <div class="list-content">
+                  <div class="list-title">云原生微服务架构</div>
+                  <div class="list-desc">进行中 · 60% 完成 · 6人团队</div>
+                </div>
+                <div class="list-meta">
+                  <div class="list-time">高优先级</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <div class="list-avatar" style="background: #FEF3C7; color: #D97706;">AI</div>
+                <div class="list-content">
+                  <div class="list-title">AI智能客服系统</div>
+                  <div class="list-desc">进行中 · 45% 完成 · 10人团队</div>
+                </div>
+                <div class="list-meta">
+                  <div class="list-time">中优先级</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <div class="list-avatar" style="background: #EDE9FE; color: #7C3AED;">区块</div>
+                <div class="list-content">
+                  <div class="list-title">区块链存证系统</div>
+                  <div class="list-desc">规划中 · 10% 完成 · 4人团队</div>
+                </div>
+                <div class="list-meta">
+                  <div class="list-time">中优先级</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI预测概览 -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">AI智能预测</div>
+              <a class="btn btn-sm btn-ghost" onclick="switchPage('ai-decision')">AI决策中心 →</a>
+            </div>
+            <div class="card-body">
+              <div class="stat-cards" style="grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 0;">
+                <div class="stat-card" style="padding: 16px;">
+                  <div class="stat-icon primary" style="width: 36px; height: 36px; font-size: 16px; margin-bottom: 10px;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+                  <div class="stat-value" style="font-size: 20px;">92.5%</div>
+                  <div class="stat-label">缺陷识别准确率</div>
+                </div>
+                <div class="stat-card" style="padding: 16px;">
+                  <div class="stat-icon success" style="width: 36px; height: 36px; font-size: 16px; margin-bottom: 10px;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                  <div class="stat-value" style="font-size: 20px;">87.3%</div>
+                  <div class="stat-label">任务预测准确度</div>
+                </div>
+                <div class="stat-card" style="padding: 16px;">
+                  <div class="stat-icon warning" style="width: 36px; height: 36px; font-size: 16px; margin-bottom: 10px;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                  <div class="stat-value" style="font-size: 20px;">3个</div>
+                  <div class="stat-label">高风险项目预警</div>
+                </div>
+                <div class="stat-card" style="padding: 16px;">
+                  <div class="stat-icon info" style="width: 36px; height: 36px; font-size: 16px; margin-bottom: 10px;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 4.5a2.5 2.5 0 000 5 2.5 2.5 0 000-5z"/><path d="M12 2C6.5 2 2 6 2 10.5c0 3 2 5.5 5 7v3.5h10V17.5c3-1.5 5-4 5-7C22 6 17.5 2 12 2z"/><path d="M8 12c1-1 2.5-1.5 4-1.5s3 .5 4 1.5"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg></div>
+                  <div class="stat-value" style="font-size: 20px;">1,286</div>
+                  <div class="stat-label">AI助手调用次数</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI决策中心页面 -->
+      <div id="page-ai-decision" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>AI决策中心</h1>
+          <p>四大AI模型赋能研发决策，数据驱动智能创新</p>
+        </div>
+
+        <div class="stat-cards">
+          <div class="stat-card" onclick="alert('缺陷识别模型')">
+            <div class="stat-card-header">
+              <div class="stat-icon danger"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+              <span class="tag tag-success">在线</span>
+            </div>
+            <div class="stat-value">92.5%</div>
+            <div class="stat-label">创新缺陷智能识别</div>
+          </div>
+          <div class="stat-card" onclick="alert('任务预测模型')">
+            <div class="stat-card-header">
+              <div class="stat-icon primary"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <span class="tag tag-success">在线</span>
+            </div>
+            <div class="stat-value">87.3%</div>
+            <div class="stat-label">研发任务进度预测</div>
+          </div>
+          <div class="stat-card" onclick="alert('风险预警模型')">
+            <div class="stat-card-header">
+              <div class="stat-icon warning"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <span class="tag tag-success">在线</span>
+            </div>
+            <div class="stat-value">89.1%</div>
+            <div class="stat-label">科技项目风险预警</div>
+          </div>
+          <div class="stat-card" onclick="alert('创新指数模型')">
+            <div class="stat-card-header">
+              <div class="stat-icon success"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 014 12.7V17H8v-2.3A7 7 0 0112 2z"/></svg></div>
+              <span class="tag tag-primary">新上线</span>
+            </div>
+            <div class="stat-value">82.5</div>
+            <div class="stat-label">研发创新指数评估</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">模型性能表现</div>
+            </div>
+            <div class="card-body">
+              <div id="modelPerformanceChart" class="chart-container" style="height: 300px;"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">预测调用统计</div>
+            </div>
+            <div class="card-body">
+              <div id="predictionStatsChart" class="chart-container" style="height: 300px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 数据要素中台页面 -->
+      <div id="page-data-assets" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>数据要素中台</h1>
+          <p>研发数据资产化管理，释放数据要素价值</p>
+        </div>
+
+        <div class="stat-cards">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon primary"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            </div>
+            <div class="stat-value">6</div>
+            <div class="stat-label">数据资产类别</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon success"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+            </div>
+            <div class="stat-value">167</div>
+            <div class="stat-label">数据资产总量</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon warning"><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin:0 2px" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            </div>
+            <div class="stat-value">87.5</div>
+            <div class="stat-label">数据质量评分</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon info"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></div>
+            </div>
+            <div class="stat-value">3,428</div>
+            <div class="stat-label">数据调用次数</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 24px;">
+          <div class="card-header">
+            <div class="card-title">数据资产目录</div>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>数据资产</th>
+                    <th>数据类别</th>
+                    <th>数据量</th>
+                    <th>价值等级</th>
+                    <th>质量评分</th>
+                    <th>更新频率</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>项目基本信息</strong></td>
+                    <td>项目数据</td>
+                    <td>10 条</td>
+                    <td><span class="tag tag-primary">★★★★★</span></td>
+                    <td>95.2</td>
+                    <td>实时</td>
+                  </tr>
+                  <tr>
+                    <td><strong>任务详情数据</strong></td>
+                    <td>任务数据</td>
+                    <td>110 条</td>
+                    <td><span class="tag tag-success">★★★★☆</span></td>
+                    <td>92.8</td>
+                    <td>实时</td>
+                  </tr>
+                  <tr>
+                    <td><strong>缺陷数据资产</strong></td>
+                    <td>质量数据</td>
+                    <td>32 条</td>
+                    <td><span class="tag tag-primary">★★★★★</span></td>
+                    <td>94.1</td>
+                    <td>实时</td>
+                  </tr>
+                  <tr>
+                    <td><strong>团队人员数据</strong></td>
+                    <td>人员数据</td>
+                    <td>15 人</td>
+                    <td><span class="tag tag-warning">★★★☆☆</span></td>
+                    <td>85.6</td>
+                    <td>每日</td>
+                  </tr>
+                  <tr>
+                    <td><strong>AI模型数据</strong></td>
+                    <td>模型数据</td>
+                    <td>4 个</td>
+                    <td><span class="tag tag-primary">★★★★★</span></td>
+                    <td>91.3</td>
+                    <td>每周</td>
+                  </tr>
+                  <tr>
+                    <td><strong>代码提交数据</strong></td>
+                    <td>代码数据</td>
+                    <td>256 次</td>
+                    <td><span class="tag tag-success">★★★★☆</span></td>
+                    <td>88.7</td>
+                    <td>实时</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 其他页面占位 -->
+      <div id="page-projects" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>创新项目管理</h1>
+          <p>科研项目全生命周期管理，从立项到结项全程追踪</p>
+        </div>
+
+        <div class="stat-cards" style="margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon primary"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+            </div>
+            <div class="stat-value">10</div>
+            <div class="stat-label">创新项目总数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon success"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></div>
+            </div>
+            <div class="stat-value">6</div>
+            <div class="stat-label">进行中项目</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon warning"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg></div>
+            </div>
+            <div class="stat-value">2</div>
+            <div class="stat-label">规划中项目</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon info"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="stat-value">2</div>
+            <div class="stat-label">已完成项目</div>
+          </div>
+        </div>
+
+        <div class="project-filter-bar">
+          <div class="filter-left">
+            <button class="filter-btn active" onclick="filterProjects('all')">全部项目</button>
+            <button class="filter-btn" onclick="filterProjects('progress')">进行中</button>
+            <button class="filter-btn" onclick="filterProjects('planning')">规划中</button>
+            <button class="filter-btn" onclick="filterProjects('completed')">已完成</button>
+            <button class="filter-btn" onclick="filterProjects('risk')">高风险</button>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="openNewProjectModal()">+ 新建项目</button>
+          </div>
+        </div>
+
+        <div class="project-list">
+          <div class="project-item">
+            <div class="project-avatar" style="background: linear-gradient(135deg, #3B82F6, #60A5FA);">智能</div>
+            <div class="project-info">
+              <h3 class="project-name">智能数据分析平台</h3>
+              <div class="project-meta">
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>8人团队</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026.03.01 - 2026.09.30</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>人工智能</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin:0 2px" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 创新指数 85.2</span>
+              </div>
+            </div>
+            <div class="project-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 75%; background: linear-gradient(90deg, #3B82F6, #60A5FA);"></div>
+              </div>
+              <div class="progress-text">75% 完成</div>
+            </div>
+            <span class="project-status progress">进行中</span>
+          </div>
+
+          <div class="project-item">
+            <div class="project-avatar" style="background: linear-gradient(135deg, #10B981, #34D399);">云原</div>
+            <div class="project-info">
+              <h3 class="project-name">云原生微服务架构</h3>
+              <div class="project-meta">
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>6人团队</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026.04.01 - 2026.10.31</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>云计算</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin:0 2px" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 创新指数 78.6</span>
+              </div>
+            </div>
+            <div class="project-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 60%; background: linear-gradient(90deg, #10B981, #34D399);"></div>
+              </div>
+              <div class="progress-text">60% 完成</div>
+            </div>
+            <span class="project-status progress">进行中</span>
+          </div>
+
+          <div class="project-item">
+            <div class="project-avatar" style="background: linear-gradient(135deg, #F59E0B, #FBBF24);">AI</div>
+            <div class="project-info">
+              <h3 class="project-name">AI智能客服系统</h3>
+              <div class="project-meta">
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>10人团队</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026.02.15 - 2026.08.15</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>人工智能</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin:0 2px" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 创新指数 82.1</span>
+              </div>
+            </div>
+            <div class="project-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 45%; background: linear-gradient(90deg, #F59E0B, #FBBF24);"></div>
+              </div>
+              <div class="progress-text">45% 完成</div>
+            </div>
+            <span class="project-status risk">高风险</span>
+          </div>
+
+          <div class="project-item">
+            <div class="project-avatar" style="background: linear-gradient(135deg, #8B5CF6, #A78BFA);">区块</div>
+            <div class="project-info">
+              <h3 class="project-name">区块链存证系统</h3>
+              <div class="project-meta">
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>4人团队</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026.06.01 - 2026.12.31</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>区块链</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin:0 2px" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 创新指数 88.3</span>
+              </div>
+            </div>
+            <div class="project-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 10%; background: linear-gradient(90deg, #8B5CF6, #A78BFA);"></div>
+              </div>
+              <div class="progress-text">10% 完成</div>
+            </div>
+            <span class="project-status planning">规划中</span>
+          </div>
+
+          <div class="project-item">
+            <div class="project-avatar" style="background: linear-gradient(135deg, #EC4899, #F472B6);">物联</div>
+            <div class="project-info">
+              <h3 class="project-name">物联网数据采集平台</h3>
+              <div class="project-meta">
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>7人团队</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026.01.01 - 2026.06.30</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>物联网</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin:0 2px" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 创新指数 72.4</span>
+              </div>
+            </div>
+            <div class="project-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 100%; background: linear-gradient(90deg, #10B981, #34D399);"></div>
+              </div>
+              <div class="progress-text">100% 完成</div>
+            </div>
+            <span class="project-status completed">已完成</span>
+          </div>
+
+          <div class="project-item">
+            <div class="project-avatar" style="background: linear-gradient(135deg, #06B6D4, #22D3EE);">大数</div>
+            <div class="project-info">
+              <h3 class="project-name">大数据治理平台</h3>
+              <div class="project-meta">
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>9人团队</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2025.10.01 - 2026.03.31</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>大数据</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin:0 2px" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 创新指数 76.8</span>
+              </div>
+            </div>
+            <div class="project-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 100%; background: linear-gradient(90deg, #10B981, #34D399);"></div>
+              </div>
+              <div class="progress-text">100% 完成</div>
+            </div>
+            <span class="project-status completed">已完成</span>
+          </div>
+
+          <div class="project-item">
+            <div class="project-avatar" style="background: linear-gradient(135deg, #6366F1, #818CF8);">安全</div>
+            <div class="project-info">
+              <h3 class="project-name">安全态势感知系统</h3>
+              <div class="project-meta">
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>5人团队</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>2026.05.01 - 2026.11.30</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>网络安全</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin:0 2px" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 创新指数 74.2</span>
+              </div>
+            </div>
+            <div class="project-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 30%; background: linear-gradient(90deg, #6366F1, #818CF8);"></div>
+              </div>
+              <div class="progress-text">30% 完成</div>
+            </div>
+            <span class="project-status progress">进行中</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-tasks" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>研发任务协同</h1>
+          <p>智能任务分配，高效协同推进</p>
+        </div>
+
+        <div class="stat-cards" style="margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon primary"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg></div>
+            </div>
+            <div class="stat-value">110</div>
+            <div class="stat-label">总任务数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon warning">⏳</div>
+            </div>
+            <div class="stat-value">28</div>
+            <div class="stat-label">待处理</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon info"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div>
+            </div>
+            <div class="stat-value">45</div>
+            <div class="stat-label">进行中</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon success"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="stat-value">37</div>
+            <div class="stat-label">已完成</div>
+          </div>
+        </div>
+
+        <div class="project-filter-bar">
+          <div class="filter-left">
+            <button class="filter-btn active" onclick="filterTasks('all')">全部任务</button>
+            <button class="filter-btn" onclick="filterTasks('todo')">待处理</button>
+            <button class="filter-btn" onclick="filterTasks('progress')">进行中</button>
+            <button class="filter-btn" onclick="filterTasks('completed')">已完成</button>
+            <button class="filter-btn" onclick="filterTasks('delayed')">已延期</button>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="alert('新建任务功能')">+ 新建任务</button>
+          </div>
+        </div>
+
+        <div class="card" id="tasksCard">
+          <div class="card-header">
+            <div class="card-title">任务列表</div>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;"><input type="checkbox"></th>
+                  <th>任务名称</th>
+                  <th>负责人</th>
+                  <th>优先级</th>
+                  <th>所属项目</th>
+                  <th>截止日期</th>
+                  <th>状态</th>
+                  <th>进度</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td><strong>实现用户认证模块JWT鉴权</strong></td>
+                  <td>李明</td>
+                  <td><span class="tag-sm danger">紧急</span></td>
+                  <td>智能数据分析平台</td>
+                  <td>2026-07-15</td>
+                  <td><span class="tag-sm warning">进行中</span></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 60px; height: 5px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 70%; height: 100%; background: #3B82F6; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #6B7280;">70%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td><strong>设计数据库ER图与表结构</strong></td>
+                  <td>王芳</td>
+                  <td><span class="tag-sm danger">紧急</span></td>
+                  <td>云原生微服务架构</td>
+                  <td>2026-07-10</td>
+                  <td><span class="tag-sm primary">待处理</span></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 60px; height: 5px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 0%; height: 100%; background: #9CA3AF; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #6B7280;">0%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td><strong>API接口文档编写与评审</strong></td>
+                  <td>张强</td>
+                  <td><span class="tag-sm warning">高</span></td>
+                  <td>AI智能客服系统</td>
+                  <td>2026-07-20</td>
+                  <td><span class="tag-sm warning">进行中</span></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 60px; height: 5px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 45%; height: 100%; background: #3B82F6; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #6B7280;">45%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td><strong>前端组件库封装与优化</strong></td>
+                  <td>刘洋</td>
+                  <td><span class="tag-sm primary">中</span></td>
+                  <td>智能数据分析平台</td>
+                  <td>2026-07-25</td>
+                  <td><span class="tag-sm success">已完成</span></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 60px; height: 5px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 100%; height: 100%; background: #10B981; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #6B7280;">100%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td><strong>区块链智能合约开发与测试</strong></td>
+                  <td>陈杰</td>
+                  <td><span class="tag-sm warning">高</span></td>
+                  <td>区块链存证系统</td>
+                  <td>2026-07-18</td>
+                  <td><span class="tag-sm danger">已延期</span></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 60px; height: 5px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 30%; height: 100%; background: #EF4444; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #6B7280;">30%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td><strong>单元测试覆盖率提升至80%</strong></td>
+                  <td>赵敏</td>
+                  <td><span class="tag-sm primary">中</span></td>
+                  <td>大数据治理平台</td>
+                  <td>2026-07-22</td>
+                  <td><span class="tag-sm warning">进行中</span></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 60px; height: 5px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 55%; height: 100%; background: #3B82F6; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #6B7280;">55%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td><strong>DevOps流水线搭建与配置</strong></td>
+                  <td>孙伟</td>
+                  <td><span class="tag-sm warning">高</span></td>
+                  <td>云原生微服务架构</td>
+                  <td>2026-07-12</td>
+                  <td><span class="tag-sm success">已完成</span></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 60px; height: 5px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 100%; height: 100%; background: #10B981; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #6B7280;">100%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td><strong>安全漏洞扫描与修复</strong></td>
+                  <td>周鹏</td>
+                  <td><span class="tag-sm danger">紧急</span></td>
+                  <td>安全态势感知系统</td>
+                  <td>2026-07-08</td>
+                  <td><span class="tag-sm primary">待处理</span></td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 60px; height: 5px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 0%; height: 100%; background: #9CA3AF; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #6B7280;">0%</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">任务完成趋势</div>
+            </div>
+            <div class="card-body">
+              <div id="taskTrendChart" class="chart-container" style="height: 260px;"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">团队任务分布</div>
+            </div>
+            <div class="card-body">
+              <div id="teamTaskChart" class="chart-container" style="height: 260px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-bugs" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>质量缺陷中心</h1>
+          <p>AI智能缺陷识别，质量问题快速定位</p>
+        </div>
+
+        <div class="stat-cards" style="margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon danger"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="9" rx="7" ry="5"/><path d="M9 14c0 2 1.3 3 3 3s3-1 3-3"/><circle cx="9" cy="8" r="1" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/><path d="M3 11l2-2m16 2l-2-2"/></svg></div>
+            </div>
+            <div class="stat-value">32</div>
+            <div class="stat-label">待处理缺陷</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon warning"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            </div>
+            <div class="stat-value">8</div>
+            <div class="stat-label">严重缺陷</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon primary"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4"/><path d="M8 20h8"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/></svg></div>
+            </div>
+            <div class="stat-value">92.5%</div>
+            <div class="stat-label">AI识别准确率</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon success"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg></div>
+              <div class="stat-trend down">↓ 8%</div>
+            </div>
+            <div class="stat-value">-8%</div>
+            <div class="stat-label">缺陷趋势</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">缺陷分类分布</div>
+            </div>
+            <div class="card-body">
+              <div id="bugCategoryChart" class="chart-container" style="height: 280px;"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">缺陷趋势分析</div>
+            </div>
+            <div class="card-body">
+              <div id="bugTrendChart" class="chart-container" style="height: 280px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="bugsCard">
+          <div class="card-header">
+            <div class="card-title">缺陷列表</div>
+            <div class="filter-left">
+              <button class="filter-btn active" onclick="filterBugs('all')">全部</button>
+              <button class="filter-btn" onclick="filterBugs('serious')">严重</button>
+              <button class="filter-btn" onclick="filterBugs('normal')">一般</button>
+              <button class="filter-btn" onclick="filterBugs('minor')">轻微</button>
+              <button class="filter-btn" onclick="filterBugs('ai')">AI识别</button>
+            </div>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>缺陷标题</th>
+                  <th>所属项目</th>
+                  <th>严重等级</th>
+                  <th>发现方式</th>
+                  <th>指派给</th>
+                  <th>状态</th>
+                  <th>创建时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#BUG-2026</td>
+                  <td><strong>用户登录接口存在SQL注入漏洞</strong></td>
+                  <td>智能数据分析平台</td>
+                  <td><span class="tag-sm danger">致命</span></td>
+                  <td><span class="tag-sm primary">AI识别</span></td>
+                  <td>李明</td>
+                  <td><span class="tag-sm warning">修复中</span></td>
+                  <td>2026-07-01</td>
+                </tr>
+                <tr>
+                  <td>#BUG-2025</td>
+                  <td><strong>数据导出功能内存泄漏</strong></td>
+                  <td>大数据治理平台</td>
+                  <td><span class="tag-sm danger">严重</span></td>
+                  <td><span class="tag-sm success">人工发现</span></td>
+                  <td>王芳</td>
+                  <td><span class="tag-sm primary">待处理</span></td>
+                  <td>2026-06-28</td>
+                </tr>
+                <tr>
+                  <td>#BUG-2024</td>
+                  <td><strong>并发请求下数据不一致</strong></td>
+                  <td>AI智能客服系统</td>
+                  <td><span class="tag-sm danger">严重</span></td>
+                  <td><span class="tag-sm primary">AI识别</span></td>
+                  <td>张强</td>
+                  <td><span class="tag-sm warning">修复中</span></td>
+                  <td>2026-06-25</td>
+                </tr>
+                <tr>
+                  <td>#BUG-2023</td>
+                  <td><strong>前端页面在低分辨率下布局错乱</strong></td>
+                  <td>智能数据分析平台</td>
+                  <td><span class="tag-sm warning">一般</span></td>
+                  <td><span class="tag-sm success">人工发现</span></td>
+                  <td>刘洋</td>
+                  <td><span class="tag-sm primary">待处理</span></td>
+                  <td>2026-06-22</td>
+                </tr>
+                <tr>
+                  <td>#BUG-2022</td>
+                  <td><strong>API响应超时未设置合理的重试机制</strong></td>
+                  <td>云原生微服务架构</td>
+                  <td><span class="tag-sm warning">一般</span></td>
+                  <td><span class="tag-sm primary">AI识别</span></td>
+                  <td>陈杰</td>
+                  <td><span class="tag-sm success">已修复</span></td>
+                  <td>2026-06-20</td>
+                </tr>
+                <tr>
+                  <td>#BUG-2021</td>
+                  <td><strong>日志文件未按日期轮转导致磁盘占满</strong></td>
+                  <td>安全态势感知系统</td>
+                  <td><span class="tag-sm primary">轻微</span></td>
+                  <td><span class="tag-sm success">人工发现</span></td>
+                  <td>周鹏</td>
+                  <td><span class="tag-sm success">已修复</span></td>
+                  <td>2026-06-18</td>
+                </tr>
+                <tr>
+                  <td>#BUG-2020</td>
+                  <td><strong>第三方SDK版本存在已知安全漏洞</strong></td>
+                  <td>区块链存证系统</td>
+                  <td><span class="tag-sm danger">严重</span></td>
+                  <td><span class="tag-sm primary">AI识别</span></td>
+                  <td>赵敏</td>
+                  <td><span class="tag-sm warning">修复中</span></td>
+                  <td>2026-06-15</td>
+                </tr>
+                <tr>
+                  <td>#BUG-2019</td>
+                  <td><strong>单元测试用例覆盖率低</strong></td>
+                  <td>物联网数据采集平台</td>
+                  <td><span class="tag-sm primary">轻微</span></td>
+                  <td><span class="tag-sm primary">AI识别</span></td>
+                  <td>孙伟</td>
+                  <td><span class="tag-sm primary">待处理</span></td>
+                  <td>2026-06-12</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-ai-assistant" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>科研AI助手</h1>
+          <p>大模型赋能研发创新，智能助手全程陪伴</p>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card" onclick="startAISession('tech_review')">
+            <div class="feature-card-icon" style="background: #EFF6FF; color: #3B82F6;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg></div>
+            <div class="feature-card-title">技术方案评审</div>
+            <div class="feature-card-desc">AI智能评审技术方案架构，识别潜在风险并给出优化建议</div>
+          </div>
+          <div class="feature-card" onclick="startAISession('code_review')">
+            <div class="feature-card-icon" style="background: #ECFDF5; color: #10B981;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+            <div class="feature-card-title">代码智能解释</div>
+            <div class="feature-card-desc">输入代码片段，AI解析逻辑结构，定位问题并提供改进方案</div>
+          </div>
+          <div class="feature-card" onclick="startAISession('doc_summary')">
+            <div class="feature-card-icon" style="background: #FFFBEB; color: #F59E0B;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+            <div class="feature-card-title">文档智能摘要</div>
+            <div class="feature-card-desc">长文档快速提炼核心要点，生成结构化摘要与行动项</div>
+          </div>
+          <div class="feature-card" onclick="startAISession('requirement')">
+            <div class="feature-card-icon" style="background: #F5F3FF; color: #8B5CF6;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 014 12.7V17H8v-2.3A7 7 0 0112 2z"/></svg></div>
+            <div class="feature-card-title">需求分析助手</div>
+            <div class="feature-card-desc">智能拆解需求，识别依赖关系，生成任务分解建议</div>
+          </div>
+          <div class="feature-card" onclick="startAISession('testing')">
+            <div class="feature-card-icon" style="background: #FEF2F2; color: #EF4444;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 3h6"/><path d="M10 3v6.5a4 4 0 104 6.5V3"/><path d="M7 14h10"/><line x1="9" y1="18" x2="9" y2="18"/><line x1="15" y1="18" x2="15" y2="18"/></svg></div>
+            <div class="feature-card-title">测试用例生成</div>
+            <div class="feature-card-desc">基于需求自动生成测试用例，覆盖边界场景与异常路径</div>
+          </div>
+          <div class="feature-card" onclick="startAISession('general')">
+            <div class="feature-card-icon" style="background: #F0F9FF; color: #0284C7;"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4"/><path d="M8 20h8"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/></svg></div>
+            <div class="feature-card-title">自由对话</div>
+            <div class="feature-card-desc">与AI助手自由交流，获取研发创新相关的专业建议</div>
+          </div>
+        </div>
+
+        <div class="chat-container">
+          <div class="chat-header">
+            <div class="chat-header-left">
+              <div class="chat-avatar">AI</div>
+              <div>
+                <div class="chat-title">智研AI助手</div>
+                <div class="chat-subtitle" id="chatSubtitle">在线 · 随时为您服务</div>
+              </div>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-ghost" onclick="clearChat()">清空对话</button>
+            </div>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-message ai">
+              <div class="chat-message-avatar">AI</div>
+              <div class="chat-message-content">
+                您好！我是智研AI助手，可以为您提供技术方案评审、代码解释、文档摘要、需求分析等专业服务。请问有什么可以帮您的吗？
+                <div class="chat-quick-actions" style="margin-top: 12px;">
+                  <button class="chat-quick-btn" onclick="sendQuickMessage('帮我分析一下这个技术方案的可行性')">方案可行性分析</button>
+                  <button class="chat-quick-btn" onclick="sendQuickMessage('如何提升团队的研发效能？')">研发效能提升</button>
+                  <button class="chat-quick-btn" onclick="sendQuickMessage('生成一份API接口文档模板')">API文档模板</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <textarea class="chat-input" id="chatInput" placeholder="输入您的问题，按Enter发送，Shift+Enter换行..." rows="1" onkeydown="handleChatKeydown(event)"></textarea>
+            <button class="chat-send-btn" id="sendBtn" onclick="sendMessage()">发送</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-innovation" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>创新能力评估</h1>
+          <p>多维度创新能力量化评估，助力创新提升</p>
+        </div>
+        <div class="grid-3">
+          <div class="innovation-score-card col-span-1" style="height: fit-content;">
+            <div class="score-label">综合创新指数</div>
+            <div class="score-value">82.5</div>
+            <div class="score-level">优秀型 · Level 4</div>
+            <div class="score-trend">
+              <div class="score-trend-item">
+                <span>较上月</span>
+                <strong>+5.2%</strong>
+              </div>
+            </div>
+          </div>
+          <div class="card col-span-2">
+            <div class="card-header">
+              <div class="card-title">创新能力六维评估</div>
+            </div>
+            <div class="card-body">
+              <div id="innovationDetailChart" class="chart-container" style="height: 300px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-transformation" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>成果转化评估</h1>
+          <p>科研成果转化潜力评估，加速科技创新价值落地</p>
+        </div>
+
+        <div class="transformation-header">
+          <div class="transformation-score-card">
+            <div class="transformation-score-label">综合转化潜力指数</div>
+            <div class="transformation-score-value">76.8</div>
+            <div class="transformation-score-level">高潜力 · A级</div>
+          </div>
+          <div class="transformation-info-card">
+            <div class="transformation-info-title">成果转化概览</div>
+            <div class="transformation-info-grid">
+              <div class="transformation-info-item">
+                <div class="transformation-info-value">28</div>
+                <div class="transformation-info-label">评估成果数</div>
+              </div>
+              <div class="transformation-info-item">
+                <div class="transformation-info-value">68%</div>
+                <div class="transformation-info-label">转化率</div>
+              </div>
+              <div class="transformation-info-item">
+                <div class="transformation-info-value">¥2.5亿</div>
+                <div class="transformation-info-label">预估市场价值</div>
+              </div>
+              <div class="transformation-info-item">
+                <div class="transformation-info-value">12</div>
+                <div class="transformation-info-label">已转化项目</div>
+              </div>
+              <div class="transformation-info-item">
+                <div class="transformation-info-value">8</div>
+                <div class="transformation-info-label">转化中项目</div>
+              </div>
+              <div class="transformation-info-item">
+                <div class="transformation-info-value">3.2年</div>
+                <div class="transformation-info-label">平均转化周期</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">转化潜力六维评估</div>
+            </div>
+            <div class="card-body">
+              <div class="dimension-list">
+                <div class="dimension-item">
+                  <span class="dimension-name">技术成熟度</span>
+                  <div class="dimension-bar">
+                    <div class="dimension-bar-fill" style="width: 85%; background: linear-gradient(90deg, #3B82F6, #60A5FA);"></div>
+                  </div>
+                  <span class="dimension-score">85</span>
+                </div>
+                <div class="dimension-item">
+                  <span class="dimension-name">市场需求度</span>
+                  <div class="dimension-bar">
+                    <div class="dimension-bar-fill" style="width: 78%; background: linear-gradient(90deg, #10B981, #34D399);"></div>
+                  </div>
+                  <span class="dimension-score">78</span>
+                </div>
+                <div class="dimension-item">
+                  <span class="dimension-name">经济效益性</span>
+                  <div class="dimension-bar">
+                    <div class="dimension-bar-fill" style="width: 72%; background: linear-gradient(90deg, #F59E0B, #FBBF24);"></div>
+                  </div>
+                  <span class="dimension-score">72</span>
+                </div>
+                <div class="dimension-item">
+                  <span class="dimension-name">创新独特性</span>
+                  <div class="dimension-bar">
+                    <div class="dimension-bar-fill" style="width: 88%; background: linear-gradient(90deg, #8B5CF6, #A78BFA);"></div>
+                  </div>
+                  <span class="dimension-score">88</span>
+                </div>
+                <div class="dimension-item">
+                  <span class="dimension-name">团队执行力</span>
+                  <div class="dimension-bar">
+                    <div class="dimension-bar-fill" style="width: 70%; background: linear-gradient(90deg, #EC4899, #F472B6);"></div>
+                  </div>
+                  <span class="dimension-score">70</span>
+                </div>
+                <div class="dimension-item">
+                  <span class="dimension-name">政策匹配度</span>
+                  <div class="dimension-bar">
+                    <div class="dimension-bar-fill" style="width: 68%; background: linear-gradient(90deg, #06B6D4, #22D3EE);"></div>
+                  </div>
+                  <span class="dimension-score">68</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">转化趋势分析</div>
+            </div>
+            <div class="card-body">
+              <div id="transformationTrendChart" class="chart-container" style="height: 300px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="transformationCard">
+          <div class="card-header">
+            <div class="card-title">成果转化项目列表</div>
+            <div class="filter-left">
+              <button class="filter-btn active" onclick="filterTransformation('all')">全部</button>
+              <button class="filter-btn" onclick="filterTransformation('transformed')">已转化</button>
+              <button class="filter-btn" onclick="filterTransformation('transforming')">转化中</button>
+              <button class="filter-btn" onclick="filterTransformation('pending')">待评估</button>
+            </div>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>成果名称</th>
+                  <th>类型</th>
+                  <th>技术领域</th>
+                  <th>转化潜力</th>
+                  <th>预估价值</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>智能数据分析平台</td>
+                  <td><span class="tag-sm primary">软件著作</span></td>
+                  <td>人工智能</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 80px; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 92%; height: 100%; background: #10B981; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #10B981; font-weight: 600;">92</span>
+                    </div>
+                  </td>
+                  <td>¥5,000万</td>
+                  <td><span class="tag-sm success">已转化</span></td>
+                  <td><a style="color: #3B82F6; font-size: 13px; cursor: pointer;">查看详情</a></td>
+                </tr>
+                <tr>
+                  <td>云原生微服务架构</td>
+                  <td><span class="tag-sm info">发明专利</span></td>
+                  <td>云计算</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 80px; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 85%; height: 100%; background: #3B82F6; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #3B82F6; font-weight: 600;">85</span>
+                    </div>
+                  </td>
+                  <td>¥3,200万</td>
+                  <td><span class="tag-sm primary">转化中</span></td>
+                  <td><a style="color: #3B82F6; font-size: 13px; cursor: pointer;">查看详情</a></td>
+                </tr>
+                <tr>
+                  <td>AI智能客服系统</td>
+                  <td><span class="tag-sm primary">软件著作</span></td>
+                  <td>人工智能</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 80px; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 78%; height: 100%; background: #3B82F6; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #3B82F6; font-weight: 600;">78</span>
+                    </div>
+                  </td>
+                  <td>¥2,800万</td>
+                  <td><span class="tag-sm primary">转化中</span></td>
+                  <td><a style="color: #3B82F6; font-size: 13px; cursor: pointer;">查看详情</a></td>
+                </tr>
+                <tr>
+                  <td>区块链存证系统</td>
+                  <td><span class="tag-sm info">发明专利</span></td>
+                  <td>区块链</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 80px; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 65%; height: 100%; background: #F59E0B; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #F59E0B; font-weight: 600;">65</span>
+                    </div>
+                  </td>
+                  <td>¥1,500万</td>
+                  <td><span class="tag-sm warning">待评估</span></td>
+                  <td><a style="color: #3B82F6; font-size: 13px; cursor: pointer;">查看详情</a></td>
+                </tr>
+                <tr>
+                  <td>物联网数据采集平台</td>
+                  <td><span class="tag-sm primary">软件著作</span></td>
+                  <td>物联网</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="width: 80px; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 72%; height: 100%; background: #3B82F6; border-radius: 3px;"></div>
+                      </div>
+                      <span style="font-size: 12px; color: #3B82F6; font-weight: 600;">72</span>
+                    </div>
+                  </td>
+                  <td>¥2,100万</td>
+                  <td><span class="tag-sm success">已转化</span></td>
+                  <td><a style="color: #3B82F6; font-size: 13px; cursor: pointer;">查看详情</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-team-efficiency" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>团队效能分析</h1>
+          <p>数据驱动的团队效能洞察，激发研发团队最大潜能</p>
+        </div>
+
+        <div class="stat-cards" style="margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon primary"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+              <span class="stat-trend up">↑ 12%</span>
+            </div>
+            <div class="stat-value">86.5</div>
+            <div class="stat-label">团队效能指数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon success"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <span class="stat-trend up">↑ 8%</span>
+            </div>
+            <div class="stat-value">92.3%</div>
+            <div class="stat-label">任务完成率</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon warning"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <span class="stat-trend down">↓ 5%</span>
+            </div>
+            <div class="stat-value">2.1天</div>
+            <div class="stat-label">平均任务周期</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon purple"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+            </div>
+            <div class="stat-value">48人</div>
+            <div class="stat-label">团队总人数</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">团队效能趋势</div>
+            </div>
+            <div class="card-body">
+              <div id="teamEfficiencyTrendChart" class="chart-container" style="height: 300px;"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">个人效能排名</div>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>排名</th>
+                    <th>成员</th>
+                    <th>完成任务</th>
+                    <th>效能分</th>
+                    <th>趋势</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span style="display: inline-block; width: 24px; height: 24px; background: linear-gradient(135deg, #F59E0B, #FBBF24); color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700;">1</span></td>
+                    <td><strong>李明</strong></td>
+                    <td>42</td>
+                    <td><strong style="color: #2563EB;">96.2</strong></td>
+                    <td><span style="color: #10B981;">↑ 3.2</span></td>
+                  </tr>
+                  <tr>
+                    <td><span style="display: inline-block; width: 24px; height: 24px; background: linear-gradient(135deg, #9CA3AF, #D1D5DB); color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700;">2</span></td>
+                    <td><strong>王芳</strong></td>
+                    <td>38</td>
+                    <td><strong style="color: #2563EB;">93.8</strong></td>
+                    <td><span style="color: #10B981;">↑ 2.1</span></td>
+                  </tr>
+                  <tr>
+                    <td><span style="display: inline-block; width: 24px; height: 24px; background: linear-gradient(135deg, #B45309, #D97706); color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700;">3</span></td>
+                    <td><strong>张强</strong></td>
+                    <td>35</td>
+                    <td><strong style="color: #2563EB;">91.5</strong></td>
+                    <td><span style="color: #10B981;">↑ 1.8</span></td>
+                  </tr>
+                  <tr>
+                    <td><span style="color: #64748B; font-weight: 600;">4</span></td>
+                    <td><strong>刘洋</strong></td>
+                    <td>33</td>
+                    <td><strong style="color: #3B82F6;">88.7</strong></td>
+                    <td><span style="color: #10B981;">↑ 0.9</span></td>
+                  </tr>
+                  <tr>
+                    <td><span style="color: #64748B; font-weight: 600;">5</span></td>
+                    <td><strong>陈杰</strong></td>
+                    <td>30</td>
+                    <td><strong style="color: #3B82F6;">85.2</strong></td>
+                    <td><span style="color: #EF4444;">↓ 0.5</span></td>
+                  </tr>
+                  <tr>
+                    <td><span style="color: #64748B; font-weight: 600;">6</span></td>
+                    <td><strong>赵敏</strong></td>
+                    <td>28</td>
+                    <td><strong style="color: #3B82F6;">82.6</strong></td>
+                    <td><span style="color: #10B981;">↑ 1.2</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3" style="margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">技术栈分布</div>
+            </div>
+            <div class="card-body">
+              <div id="techStackChart" class="chart-container" style="height: 220px;"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">工作负载分布</div>
+            </div>
+            <div class="card-body">
+              <div id="workloadChart" class="chart-container" style="height: 220px;"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">代码质量指标</div>
+            </div>
+            <div class="card-body">
+              <div id="codeQualityChart" class="chart-container" style="height: 220px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-knowledge-graph" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>创新知识图谱</h1>
+          <p>构建研发知识网络，挖掘创新关联价值</p>
+        </div>
+
+        <div class="stat-cards" style="margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon purple"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
+            </div>
+            <div class="stat-value">2,458</div>
+            <div class="stat-label">知识节点</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon cyan"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><path d="M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg></div>
+            </div>
+            <div class="stat-value">8,926</div>
+            <div class="stat-label">关联关系</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon primary"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+            </div>
+            <div class="stat-value">12</div>
+            <div class="stat-label">技术领域</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon success"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 014 12.7V17H8v-2.3A7 7 0 0112 2z"/></svg></div>
+              <span class="stat-trend up">↑ 23%</span>
+            </div>
+            <div class="stat-value">386</div>
+            <div class="stat-label">本月新增</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">知识关联图谱</div>
+              <div class="filter-left">
+                <button class="filter-btn active" onclick="filterKnowledgeGraph('tech')">技术</button>
+                <button class="filter-btn" onclick="filterKnowledgeGraph('project')">项目</button>
+                <button class="filter-btn" onclick="filterKnowledgeGraph('person')">人员</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="knowledgeGraphChart" class="chart-container" style="height: 380px;"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">热门技术领域</div>
+            </div>
+            <div class="card-body">
+              <div id="techDomainChart" class="chart-container" style="height: 380px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="knowledgeCard">
+          <div class="card-header">
+            <div class="card-title">知识资产列表</div>
+            <div class="filter-left">
+              <button class="filter-btn active" onclick="filterKnowledge('all')">全部</button>
+              <button class="filter-btn" onclick="filterKnowledge('doc')">技术文档</button>
+              <button class="filter-btn" onclick="filterKnowledge('patent')">专利成果</button>
+              <button class="filter-btn" onclick="filterKnowledge('practice')">最佳实践</button>
+              <button class="filter-btn" onclick="filterKnowledge('lesson')">经验教训</button>
+            </div>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>知识标题</th>
+                  <th>类型</th>
+                  <th>技术领域</th>
+                  <th>关联数</th>
+                  <th>浏览量</th>
+                  <th>贡献者</th>
+                  <th>更新时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>微服务架构设计最佳实践</strong></td>
+                  <td><span class="tag-sm primary">最佳实践</span></td>
+                  <td>云计算</td>
+                  <td>128</td>
+                  <td>1,856</td>
+                  <td>李明</td>
+                  <td>2026-07-05</td>
+                </tr>
+                <tr>
+                  <td><strong>基于Transformer的文本分类算法</strong></td>
+                  <td><span class="tag-sm info">技术文档</span></td>
+                  <td>人工智能</td>
+                  <td>96</td>
+                  <td>2,341</td>
+                  <td>王芳</td>
+                  <td>2026-07-03</td>
+                </tr>
+                <tr>
+                  <td><strong>一种分布式数据同步方法及装置</strong></td>
+                  <td><span class="tag-sm success">专利成果</span></td>
+                  <td>大数据</td>
+                  <td>78</td>
+                  <td>1,245</td>
+                  <td>张强</td>
+                  <td>2026-07-01</td>
+                </tr>
+                <tr>
+                  <td><strong>线上故障排查经验汇总</strong></td>
+                  <td><span class="tag-sm warning">经验教训</span></td>
+                  <td>运维</td>
+                  <td>64</td>
+                  <td>987</td>
+                  <td>陈杰</td>
+                  <td>2026-06-28</td>
+                </tr>
+                <tr>
+                  <td><strong>前端性能优化指南</strong></td>
+                  <td><span class="tag-sm primary">最佳实践</span></td>
+                  <td>前端</td>
+                  <td>112</td>
+                  <td>2,108</td>
+                  <td>刘洋</td>
+                  <td>2026-06-25</td>
+                </tr>
+                <tr>
+                  <td><strong>区块链共识算法对比研究</strong></td>
+                  <td><span class="tag-sm info">技术文档</span></td>
+                  <td>区块链</td>
+                  <td>52</td>
+                  <td>756</td>
+                  <td>赵敏</td>
+                  <td>2026-06-22</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-realtime" class="page" style="display: none;">
+        <div class="page-header">
+          <h1>实时监控看板</h1>
+          <p>研发效能实时洞察，数据要素动态监控</p>
+        </div>
+
+        <div class="stat-cards" style="margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon primary" style="animation: pulse 2s infinite;"><svg class="stat-svg" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="12" r="8"/></svg></div>
+              <span class="tag-sm success">正常</span>
+            </div>
+            <div class="stat-value">99.9%</div>
+            <div class="stat-label">系统可用性</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon info"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+            </div>
+            <div class="stat-value">128ms</div>
+            <div class="stat-label">平均响应时间</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon warning"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+            </div>
+            <div class="stat-value">2,456</div>
+            <div class="stat-label">实时在线用户</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <div class="stat-icon success"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></div>
+            </div>
+            <div class="stat-value">15,234</div>
+            <div class="stat-label">今日API调用</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">实时请求流量</div>
+              <span class="tag-sm success">● 实时</span>
+            </div>
+            <div class="card-body">
+              <div id="realtimeTrafficChart" class="chart-container" style="height: 280px;"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">系统资源监控</div>
+              <span class="tag-sm success">● 实时</span>
+            </div>
+            <div class="card-body">
+              <div id="systemResourceChart" class="chart-container" style="height: 280px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">AI模型调用监控</div>
+            </div>
+            <div class="card-body">
+              <div id="aiModelMonitorChart" class="chart-container" style="height: 260px;"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">数据要素流动监控</div>
+            </div>
+            <div class="card-body">
+              <div id="dataFlowChart" class="chart-container" style="height: 260px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">系统日志实时监控</div>
+            <span class="tag-sm success">● 实时更新</span>
+          </div>
+          <div class="card-body">
+            <div style="background: #1F2937; border-radius: 8px; padding: 16px; font-family: 'Consolas', monospace; font-size: 12px; line-height: 1.8; color: #E5E7EB; max-height: 300px; overflow-y: auto;">
+              <div style="color: #10B981;">[2026-07-08 14:32:15] INFO  &nbsp;API Gateway - 请求 /api/innovation/score 处理成功，耗时 45ms</div>
+              <div style="color: #3B82F6;">[2026-07-08 14:32:14] INFO  &nbsp;AI Model - 创新指数评估模型被调用，project_id=8</div>
+              <div style="color: #F59E0B;">[2026-07-08 14:32:12] WARN  &nbsp;Data Pipeline - Kafka 消费者延迟 230ms，正在自动扩容</div>
+              <div style="color: #10B981;">[2026-07-08 14:32:10] INFO  &nbsp;Auth Service - 用户 管理员 登录成功，IP: 192.168.1.100</div>
+              <div style="color: #3B82F6;">[2026-07-08 14:32:08] INFO  &nbsp;Spark Job - 批处理任务 #job-7821 完成，处理记录 15,234 条</div>
+              <div style="color: #10B981;">[2026-07-08 14:32:05] INFO  &nbsp;Cache Service - Redis 缓存命中率 96.8%，状态正常</div>
+              <div style="color: #EF4444;">[2026-07-08 14:32:01] ERROR &nbsp;Bug Detection - AI检测到潜在SQL注入风险，bug_id=BUG-2026</div>
+              <div style="color: #3B82F6;">[2026-07-08 14:31:58] INFO  &nbsp;Data Asset - 数据要素资产目录更新，新增 3 条记录</div>
+              <div style="color: #10B981;">[2026-07-08 14:31:55] INFO  &nbsp;Flink Stream - 实时流计算任务运行正常，吞吐量 2,100 条/秒</div>
+              <div style="color: #F59E0B;">[2026-07-08 14:31:52] WARN  &nbsp;DB Monitor - PostgreSQL 连接池使用率 78%，接近阈值</div>
+              <div style="color: #10B981;">[2026-07-08 14:31:48] INFO  &nbsp;Task Service - 任务状态变更，task_id=156 已完成</div>
+              <div style="color: #3B82F6;">[2026-07-08 14:31:45] INFO  &nbsp;Project Service - 项目进度更新，project_id=3 完成度 75%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ===== 全局图表基础设施 =====
+
+// ===== API 配置 =====
+const API_BASE = 'http://192.168.146.128:8000';
+let API_TOKEN = localStorage.getItem('zhiyan_token') || '';
+let CURRENT_USER = null;
+
+async function apiLogin(account, password) {
+  try {
+    const res = await fetch(API_BASE + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ account, password })
+    });
+    const data = await res.json();
+    if (data.access_token) {
+      API_TOKEN = data.access_token;
+      CURRENT_USER = data.user;
+      localStorage.setItem('zhiyan_token', API_TOKEN);
+      return data;
+    }
+    return null;
+  } catch(e) {
+    console.error('Login error:', e);
+    return null;
+  }
+}
+
+async function apiGet(path) {
+  try {
+    const res = await fetch(API_BASE + path, {
+      headers: { 
+        'Authorization': 'Bearer ' + API_TOKEN,
+        'Accept': 'application/json; charset=utf-8'
+      }
+    });
+    const text = await res.text();
+    return JSON.parse(text);
+  } catch(e) {
+    console.error('API GET error:', path, e);
+    return null;
+  }
+}
+
+async function apiPost(path, body) {
+  try {
+    const res = await fetch(API_BASE + path, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + API_TOKEN,
+        'Accept': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify(body)
+    });
+    const text = await res.text();
+    return JSON.parse(text);
+  } catch(e) {
+    console.error('API POST error:', path, e);
+    return null;
+  }
+}
+
+// 自动登录并加载数据
+async function initAppWithRealData() {
+  if (!API_TOKEN) {
+    const loginResult = await apiLogin('admin', '123456');
+    if (!loginResult) {
+      console.warn('自动登录失败，使用mock数据');
+      return false;
+    }
+  }
+  // 验证token有效性
+  const me = await apiGet('/api/auth/me');
+  if (!me || !me.id) {
+    API_TOKEN = '';
+    localStorage.removeItem('zhiyan_token');
+    const loginResult = await apiLogin('admin', '123456');
+    if (!loginResult) return false;
+  } else {
+    CURRENT_USER = me;
+  }
+  // 更新用户信息显示
+  if (CURRENT_USER) {
+    const userNameEl = document.querySelector('.user-name');
+    const userRoleEl = document.querySelector('.user-role');
+    const userAvatarEl = document.querySelector('.user-avatar');
+    if (userNameEl) userNameEl.textContent = CURRENT_USER.realname || CURRENT_USER.account;
+    if (userRoleEl) userRoleEl.textContent = CURRENT_USER.role === 'admin' ? '管理员' : (CURRENT_USER.role === 'pm' ? '项目经理' : (CURRENT_USER.role === 'qa' ? '测试工程师' : '研发工程师'));
+    if (userAvatarEl) {
+      userAvatarEl.textContent = (CURRENT_USER.realname || CURRENT_USER.account || 'U').charAt(0);
+      userAvatarEl.style.background = CURRENT_USER.avatar_color || '#6366f1';
+    }
+  }
+  return true;
+}
+
+// 统一图表管理器
+const charts = [];
+function registerChart(chart) {
+  charts.push(chart);
+}
+window.addEventListener('resize', () => {
+  charts.forEach(c => c && c.resize && c.resize());
+});
+
+// 统一色板
+const CHART_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316', '#6366F1'];
+
+// 获取统一图表主题
+function getChartTheme() {
+  return {
+    color: CHART_COLORS,
+    tooltip: {
+      backgroundColor: 'rgba(255,255,255,0.96)',
+      borderColor: '#E5E7EB',
+      borderWidth: 1,
+      borderRadius: 8,
+      padding: [10, 14],
+      textStyle: { color: '#374151', fontSize: 13 },
+      extraCssText: 'box-shadow: 0 4px 12px rgba(0,0,0,0.08);'
+    },
+    animationDuration: 800,
+    animationEasing: 'cubicOut'
+  };
+}
+
+// 图表淡入动画
+function fadeInChart(el) {
+  if (!el) return;
+  el.style.opacity = '0';
+  el.style.transition = 'opacity 0.6s ease';
+  el.style.transform = 'translateY(8px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  requestAnimationFrame(() => {
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  });
+}
+
+// 页面数据加载缓存
+const pageDataLoaded = {};
+
+// 加载项目列表真实数据
+async function loadProjectsRealData() {
+  if (pageDataLoaded.projects) return;
+  const hasRealData = await initAppWithRealData();
+  if (!hasRealData) return;
+
+  const result = await apiGet('/api/projects?page_size=20');
+  if (!result || !result.items) return;
+
+  const listEl = document.querySelector('#page-projects .project-list');
+  if (!listEl) return;
+
+  const colors = [
+    'linear-gradient(135deg, #3B82F6, #60A5FA)',
+    'linear-gradient(135deg, #10B981, #34D399)',
+    'linear-gradient(135deg, #8B5CF6, #A78BFA)',
+    'linear-gradient(135deg, #F59E0B, #FBBF24)',
+    'linear-gradient(135deg, #EC4899, #F472B6)',
+    'linear-gradient(135deg, #06B6D4, #22D3EE)',
+    'linear-gradient(135deg, #F97316, #FB923C)',
+    'linear-gradient(135deg, #6366F1, #818CF8)',
+  ];
+
+  let html = '';
+  result.items.forEach((p, i) => {
+    const firstChars = p.name.substring(0, 2);
+    const color = colors[i % colors.length];
+    const statusText = p.status === 'doing' ? '进行中' : (p.status === 'planning' ? '规划中' : (p.status === 'done' ? '已完成' : p.status));
+    const statusClass = p.status === 'doing' ? 'progress' : (p.status === 'planning' ? 'planning' : 'done');
+    const startDate = p.start_date || '--';
+    const endDate = p.end_date || '--';
+    const progress = p.progress || 0;
+
+    html += `
+          <div class="project-item">
+            <div class="project-avatar" style="background: ${color};">${firstChars}</div>
+            <div class="project-info">
+              <h3 class="project-name">${p.name}</h3>
+              <div class="project-meta">
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>${p.task_count || 0}个任务</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${startDate} - ${endDate}</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>项目ID: ${p.id}</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin:0 2px" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 进度 ${progress}%</span>
+              </div>
+            </div>
+            <div class="project-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${progress}%; background: ${color};"></div>
+              </div>
+              <div class="progress-text">${progress}% 完成</div>
+            </div>
+            <span class="project-status ${statusClass}">${statusText}</span>
+          </div>`;
+  });
+
+  listEl.innerHTML = html;
+  pageDataLoaded.projects = true;
+}
+
+// 加载任务列表真实数据
+async function loadTasksRealData() {
+  if (pageDataLoaded.tasks) return;
+  const hasRealData = await initAppWithRealData();
+  if (!hasRealData) return;
+
+  // 先获取所有项目的任务
+  const projResult = await apiGet('/api/projects?page_size=20');
+  if (!projResult || !projResult.items) return;
+
+  let allTasks = [];
+  for (const p of projResult.items.slice(0, 4)) {
+    const tResult = await apiGet('/api/projects/' + p.id + '/tasks?page_size=10');
+    if (tResult && tResult.items) {
+      tResult.items.forEach(t => t.project_name = p.name);
+      allTasks = allTasks.concat(tResult.items);
+    }
+  }
+
+  const listEl = document.querySelector('#page-tasks .task-list');
+  if (!listEl) return;
+
+  const priorityColors = { high: '#EF4444', medium: '#F59E0B', low: '#10B981' };
+  const statusText = { todo: '待办', doing: '进行中', done: '已完成', closed: '已关闭' };
+
+  let html = '';
+  allTasks.slice(0, 10).forEach((t, i) => {
+    const pColor = priorityColors[t.priority] || '#6B7280';
+    const sText = statusText[t.status] || t.status;
+    html += `
+          <div class="task-item">
+            <div class="task-checkbox" onclick="this.classList.toggle('checked')"></div>
+            <div class="task-info">
+              <div class="task-name">${t.name}</div>
+              <div class="task-meta">
+                <span class="task-priority" style="color: ${pColor};">● ${t.priority === 'high' ? '高' : (t.priority === 'medium' ? '中' : '低')}优先级</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>${t.project_name || '项目' + t.project_id}</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>截止: ${t.deadline || '--'}</span>
+                <span><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${t.consumed || 0}h / ${t.estimate || 0}h</span>
+              </div>
+            </div>
+            <span class="task-status ${t.status}">${sText}</span>
+          </div>`;
+  });
+
+  listEl.innerHTML = html;
+  pageDataLoaded.tasks = true;
+}
+
+// 加载Bug列表真实数据
+async function loadBugsRealData() {
+  if (pageDataLoaded.bugs) return;
+  const hasRealData = await initAppWithRealData();
+  if (!hasRealData) return;
+
+  const result = await apiGet('/api/bugs?page_size=15');
+  if (!result || !result.items) return;
+
+  const listEl = document.querySelector('#page-bugs .bug-list');
+  if (!listEl) return;
+
+  const sevColors = { fatal: '#DC2626', serious: '#EA580C', normal: '#D97706', minor: '#65A30D', suggestion: '#0EA5E9' };
+  const sevText = { fatal: '致命', serious: '严重', normal: '一般', minor: '轻微', suggestion: '建议' };
+  const statusText = { active: '活跃', resolved: '已解决', closed: '已关闭' };
+
+  let html = '';
+  result.items.forEach((b, i) => {
+    const sevColor = sevColors[b.severity] || '#6B7280';
+    const sevT = sevText[b.severity] || b.severity;
+    const sText = statusText[b.status] || b.status;
+    html += `
+          <div class="bug-item">
+            <div class="bug-severity" style="background: ${sevColor};">${sevT.charAt(0)}</div>
+            <div class="bug-info">
+              <div class="bug-title">${b.title}</div>
+              <div class="bug-meta">
+                <span style="color: ${sevColor};">● ${sevT}</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>#${b.id}</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>项目${b.project_id || ''}</span>
+                <span><svg style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:3px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${b.created_at ? b.created_at.substring(0, 10) : '--'}</span>
+              </div>
+            </div>
+            <span class="bug-status ${b.status}">${sText}</span>
+          </div>`;
+  });
+
+  listEl.innerHTML = html;
+  pageDataLoaded.bugs = true;
+}
+
+// ===== 过滤功能 =====
+let currentProjectFilter = 'all';
+let currentTaskFilter = 'all';
+let currentBugFilter = 'all';
+let currentTransformationFilter = 'all';
+let currentKnowledgeGraphFilter = 'tech';
+let currentKnowledgeFilter = 'all';
+let currentDashboardTimeFilter = '7';
+
+function filterProjects(status) {
+  currentProjectFilter = status;
+  const pageEl = document.getElementById('page-projects');
+  const filterBtns = pageEl.querySelectorAll('.project-filter-bar .filter-btn');
+  filterBtns.forEach(btn => btn.classList.remove('active'));
+  const btnMap = { 'all': 0, 'progress': 1, 'planning': 2, 'completed': 3, 'risk': 4 };
+  if (btnMap[status] !== undefined && filterBtns[btnMap[status]]) {
+    filterBtns[btnMap[status]].classList.add('active');
+  }
+
+  const projectItems = pageEl.querySelectorAll('.project-item');
+  projectItems.forEach(item => {
+    const statusEl = item.querySelector('.project-status');
+    if (!statusEl) { item.style.display = ''; return; }
+    const statusText = statusEl.textContent.trim();
+    let show = false;
+    switch(status) {
+      case 'all':
+        show = true;
+        break;
+      case 'progress':
+        show = statusText === '进行中';
+        break;
+      case 'planning':
+        show = statusText === '规划中';
+        break;
+      case 'completed':
+        show = statusText === '已完成';
+        break;
+      case 'risk':
+        show = statusText === '高风险';
+        break;
+    }
+    item.style.display = show ? '' : 'none';
+  });
+}
+
+function filterTasks(status) {
+  currentTaskFilter = status;
+  const pageEl = document.getElementById('page-tasks');
+  const filterBtns = pageEl.querySelectorAll('.project-filter-bar .filter-btn');
+  filterBtns.forEach(btn => btn.classList.remove('active'));
+  const btnMap = { 'all': 0, 'todo': 1, 'progress': 2, 'completed': 3, 'delayed': 4 };
+  if (btnMap[status] !== undefined && filterBtns[btnMap[status]]) {
+    filterBtns[btnMap[status]].classList.add('active');
+  }
+
+  const table = pageEl.querySelector('.data-table tbody');
+  if (!table) return;
+  const rows = table.querySelectorAll('tr');
+  rows.forEach(row => {
+    const statusCell = row.querySelector('td:nth-child(7) span');
+    if (!statusCell) { row.style.display = ''; return; }
+    const statusText = statusCell.textContent.trim();
+    let show = false;
+    switch(status) {
+      case 'all':
+        show = true;
+        break;
+      case 'todo':
+        show = statusText === '待处理';
+        break;
+      case 'progress':
+        show = statusText === '进行中';
+        break;
+      case 'completed':
+        show = statusText === '已完成';
+        break;
+      case 'delayed':
+        show = statusText === '已延期';
+        break;
+    }
+    row.style.display = show ? '' : 'none';
+  });
+}
+
+function filterBugs(severity) {
+  currentBugFilter = severity;
+  const cardEl = document.getElementById('bugsCard');
+  const filterBtns = cardEl.querySelectorAll('.filter-btn');
+  filterBtns.forEach(btn => btn.classList.remove('active'));
+  const btnMap = { 'all': 0, 'serious': 1, 'normal': 2, 'minor': 3, 'ai': 4 };
+  if (btnMap[severity] !== undefined && filterBtns[btnMap[severity]]) {
+    filterBtns[btnMap[severity]].classList.add('active');
+  }
+
+  const table = cardEl.querySelector('.data-table tbody');
+  if (!table) return;
+  const rows = table.querySelectorAll('tr');
+  rows.forEach(row => {
+    const severityCell = row.querySelector('td:nth-child(4) span');
+    const sourceCell = row.querySelector('td:nth-child(5) span');
+    if (!severityCell) { row.style.display = ''; return; }
+    const severityText = severityCell.textContent.trim();
+    const sourceText = sourceCell ? sourceCell.textContent.trim() : '';
+    let show = false;
+    switch(severity) {
+      case 'all':
+        show = true;
+        break;
+      case 'serious':
+        show = severityText === '致命' || severityText === '严重';
+        break;
+      case 'normal':
+        show = severityText === '一般';
+        break;
+      case 'minor':
+        show = severityText === '轻微';
+        break;
+      case 'ai':
+        show = sourceText === 'AI识别';
+        break;
+    }
+    row.style.display = show ? '' : 'none';
+  });
+}
+
+function filterTransformation(status) {
+  currentTransformationFilter = status;
+  const cardEl = document.getElementById('transformationCard');
+  const filterBtns = cardEl.querySelectorAll('.filter-btn');
+  filterBtns.forEach(btn => btn.classList.remove('active'));
+  const btnMap = { 'all': 0, 'transformed': 1, 'transforming': 2, 'pending': 3 };
+  if (btnMap[status] !== undefined && filterBtns[btnMap[status]]) {
+    filterBtns[btnMap[status]].classList.add('active');
+  }
+
+  const table = cardEl.querySelector('.data-table tbody');
+  if (!table) return;
+  const rows = table.querySelectorAll('tr');
+  rows.forEach(row => {
+    const statusCell = row.querySelector('td:nth-child(6) span');
+    if (!statusCell) { row.style.display = ''; return; }
+    const statusText = statusCell.textContent.trim();
+    let show = false;
+    switch(status) {
+      case 'all':
+        show = true;
+        break;
+      case 'transformed':
+        show = statusText === '已转化';
+        break;
+      case 'transforming':
+        show = statusText === '转化中';
+        break;
+      case 'pending':
+        show = statusText === '待评估';
+        break;
+    }
+    row.style.display = show ? '' : 'none';
+  });
+}
+
+function filterKnowledgeGraph(type) {
+  currentKnowledgeGraphFilter = type;
+  const cardEl = document.querySelector('#page-knowledge-graph .grid-2 .card:first-child');
+  const filterBtns = cardEl.querySelectorAll('.filter-btn');
+  filterBtns.forEach(btn => btn.classList.remove('active'));
+  const btnMap = { 'tech': 0, 'project': 1, 'person': 2 };
+  if (btnMap[type] !== undefined && filterBtns[btnMap[type]]) {
+    filterBtns[btnMap[type]].classList.add('active');
+  }
+}
+
+function filterKnowledge(type) {
+  currentKnowledgeFilter = type;
+  const cardEl = document.getElementById('knowledgeCard');
+  const filterBtns = cardEl.querySelectorAll('.filter-btn');
+  filterBtns.forEach(btn => btn.classList.remove('active'));
+  const btnMap = { 'all': 0, 'doc': 1, 'patent': 2, 'practice': 3, 'lesson': 4 };
+  if (btnMap[type] !== undefined && filterBtns[btnMap[type]]) {
+    filterBtns[btnMap[type]].classList.add('active');
+  }
+
+  const table = cardEl.querySelector('.data-table tbody');
+  if (!table) return;
+  const rows = table.querySelectorAll('tr');
+  rows.forEach(row => {
+    const typeCell = row.querySelector('td:nth-child(2) span');
+    if (!typeCell) { row.style.display = ''; return; }
+    const typeText = typeCell.textContent.trim();
+    let show = false;
+    switch(type) {
+      case 'all':
+        show = true;
+        break;
+      case 'doc':
+        show = typeText === '技术文档';
+        break;
+      case 'patent':
+        show = typeText === '专利成果';
+        break;
+      case 'practice':
+        show = typeText === '最佳实践';
+        break;
+      case 'lesson':
+        show = typeText === '经验教训';
+        break;
+    }
+    row.style.display = show ? '' : 'none';
+  });
+}
+
+function filterDashboardTime(days) {
+  currentDashboardTimeFilter = days;
+  const cardEl = document.querySelector('#page-dashboard .grid-2 .card:first-child');
+  const filterBtns = cardEl.querySelectorAll('.time-filter-btn');
+  filterBtns.forEach(btn => btn.classList.remove('active'));
+  const btnMap = { '7': 0, '30': 1, '90': 2 };
+  if (btnMap[days] !== undefined && filterBtns[btnMap[days]]) {
+    filterBtns[btnMap[days]].classList.add('active');
+  }
+}
+
+// ===== 新建项目模态框 =====
+function openNewProjectModal() {
+  const modalHtml = `
+    <div id="newProjectModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+      <div style="background: #fff; border-radius: 12px; padding: 24px; width: 480px; max-width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #1F2937;">新建项目</h3>
+          <button onclick="closeNewProjectModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6B7280;">×</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <label style="display: block; font-size: 14px; color: #374151; margin-bottom: 6px; font-weight: 500;">项目名称</label>
+            <input type="text" id="newProjectName" placeholder="请输入项目名称" style="width: 100%; padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 14px; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 14px; color: #374151; margin-bottom: 6px; font-weight: 500;">项目类型</label>
+            <select id="newProjectType" style="width: 100%; padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 14px; box-sizing: border-box;">
+              <option value="人工智能">人工智能</option>
+              <option value="云计算">云计算</option>
+              <option value="大数据">大数据</option>
+              <option value="区块链">区块链</option>
+              <option value="物联网">物联网</option>
+              <option value="网络安全">网络安全</option>
+            </select>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 14px; color: #374151; margin-bottom: 6px; font-weight: 500;">开始日期</label>
+              <input type="date" id="newProjectStart" style="width: 100%; padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 14px; box-sizing: border-box;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 14px; color: #374151; margin-bottom: 6px; font-weight: 500;">结束日期</label>
+              <input type="date" id="newProjectEnd" style="width: 100%; padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 14px; box-sizing: border-box;">
+            </div>
+          </div>
+          <div>
+            <label style="display: block; font-size: 14px; color: #374151; margin-bottom: 6px; font-weight: 500;">团队人数</label>
+            <input type="number" id="newProjectTeam" placeholder="请输入团队人数" min="1" style="width: 100%; padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 14px; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 14px; color: #374151; margin-bottom: 6px; font-weight: 500;">项目描述</label>
+            <textarea id="newProjectDesc" placeholder="请输入项目描述" rows="3" style="width: 100%; padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 14px; box-sizing: border-box; resize: vertical;"></textarea>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+          <button onclick="closeNewProjectModal()" style="padding: 8px 16px; border: 1px solid #D1D5DB; background: #fff; border-radius: 6px; cursor: pointer; font-size: 14px; color: #374151;">取消</button>
+          <button onclick="submitNewProject()" style="padding: 8px 20px; border: none; background: linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #60A5FA 100%); color: #fff; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;">创建项目</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeNewProjectModal() {
+  const modal = document.getElementById('newProjectModal');
+  if (modal) modal.remove();
+}
+
+function submitNewProject() {
+  const name = document.getElementById('newProjectName').value.trim();
+  if (!name) {
+    alert('请输入项目名称');
+    return;
+  }
+  alert('项目 "' + name + '" 创建成功！（演示模式）');
+  closeNewProjectModal();
+}
+
+// 页面切换
+function switchPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  document.getElementById('page-' + pageId).style.display = 'block';
+
+  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+  document.querySelector('[data-page="' + pageId + '"]').classList.add('active');
+
+  const titles = {
+    'dashboard': '创新驾驶舱',
+    'projects': '创新项目管理',
+    'tasks': '研发任务协同',
+    'bugs': '质量缺陷中心',
+    'ai-decision': 'AI决策中心',
+    'ai-assistant': '科研AI助手',
+    'innovation': '创新能力评估',
+    'data-assets': '数据要素中台',
+    'transformation': '成果转化评估',
+    'team-efficiency': '团队效能分析',
+    'knowledge-graph': '创新知识图谱',
+    'realtime': '实时监控看板'
+  };
+  document.getElementById('pageTitle').textContent = titles[pageId] || '智研工坊';
+
+  setTimeout(() => {
+    initChartsForPage(pageId);
+  }, 100);
+
+  // 加载对应页面的真实数据
+  const dataLoaders = {
+    'dashboard': loadDashboardRealData,
+    'projects': loadProjectsRealData,
+    'tasks': loadTasksRealData,
+    'bugs': loadBugsRealData,
+  };
+  if (dataLoaders[pageId]) {
+    dataLoaders[pageId]();
+  }
+}
+
+// 创新能力雷达图
+function initInnovationRadarChart() {
+  const el = document.getElementById('innovationRadarChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: {
+      trigger: 'item'
+    },
+    radar: {
+      indicator: [
+        { name: '技术复杂度', max: 100 },
+        { name: '研发活跃度', max: 100 },
+        { name: '质量水平', max: 100 },
+        { name: '效率表现', max: 100 },
+        { name: '团队能力', max: 100 },
+        { name: '成果价值', max: 100 }
+      ],
+      radius: '65%',
+      axisName: {
+        color: '#6B7280',
+        fontSize: 12
+      },
+      splitArea: {
+        areaStyle: {
+          color: ['#F9FAFB', '#F3F4F6', '#E5E7EB', '#D1D5DB']
+        }
+      },
+      axisLine: {
+        lineStyle: { color: '#E5E7EB' }
+      },
+      splitLine: {
+        lineStyle: { color: '#E5E7EB' }
+      }
+    },
+    series: [{
+      type: 'radar',
+      data: [{
+        value: [85, 78, 92, 75, 80, 87],
+        name: '当前指数',
+        areaStyle: {
+          color: {
+            type: 'radial', x: 0.5, y: 0.5, r: 0.5,
+            colorStops: [
+              { offset: 0, color: 'rgba(59, 130, 246, 0.35)' },
+              { offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
+            ]
+          }
+        },
+        lineStyle: {
+          color: '#3B82F6',
+          width: 2
+        },
+        itemStyle: {
+          color: '#3B82F6'
+        },
+        label: {
+          show: true,
+          formatter: function(params) { return params.value; },
+          color: '#3B82F6',
+          fontSize: 11,
+          fontWeight: 600
+        }
+      }, {
+        value: [70, 72, 80, 70, 75, 78],
+        name: '行业基准',
+        areaStyle: {
+          color: {
+            type: 'radial', x: 0.5, y: 0.5, r: 0.5,
+            colorStops: [
+              { offset: 0, color: 'rgba(16, 185, 129, 0.15)' },
+              { offset: 1, color: 'rgba(16, 185, 129, 0.02)' }
+            ]
+          }
+        },
+        lineStyle: {
+          color: '#10B981',
+          width: 1.5,
+          type: 'dashed'
+        },
+        itemStyle: {
+          color: '#10B981'
+        }
+      }]
+    }]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 研发效能趋势图
+function initEfficiencyTrendChart() {
+  const el = document.getElementById('efficiencyTrendChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['任务完成率', '缺陷修复率', '需求交付率'],
+      right: 0,
+      top: 0,
+      textStyle: { fontSize: 12, color: '#6B7280' }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      top: '15%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['第1周', '第2周', '第3周', '第4周', '第5周', '第6周', '第7周', '第8周'],
+      axisLine: { lineStyle: { color: '#E5E7EB' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      max: 100,
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F3F4F6' } },
+      axisLabel: { color: '#6B7280', fontSize: 11, formatter: '{value}%' }
+    },
+    series: [
+      {
+        name: '任务完成率',
+        type: 'line',
+        smooth: true,
+        data: [65, 72, 68, 75, 78, 74, 80, 76],
+        lineStyle: { color: '#3B82F6', width: 2.5 },
+        itemStyle: { color: '#3B82F6' },
+        symbolSize: 6,
+        emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(59,130,246,0.3)' } },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(59, 130, 246, 0.25)' },
+              { offset: 1, color: 'rgba(59, 130, 246, 0.02)' }
+            ]
+          }
+        }
+      },
+      {
+        name: '缺陷修复率',
+        type: 'line',
+        smooth: true,
+        data: [70, 75, 80, 78, 85, 82, 88, 90],
+        lineStyle: { color: '#10B981', width: 2.5 },
+        itemStyle: { color: '#10B981' },
+        symbolSize: 6,
+        emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(16,185,129,0.3)' } },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(16, 185, 129, 0.2)' },
+              { offset: 1, color: 'rgba(16, 185, 129, 0.02)' }
+            ]
+          }
+        }
+      },
+      {
+        name: '需求交付率',
+        type: 'line',
+        smooth: true,
+        data: [60, 65, 70, 68, 72, 75, 78, 76],
+        lineStyle: { color: '#F59E0B', width: 2.5 },
+        itemStyle: { color: '#F59E0B' },
+        symbolSize: 6,
+        emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(245,158,11,0.3)' } },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(245, 158, 11, 0.2)' },
+              { offset: 1, color: 'rgba(245, 158, 11, 0.02)' }
+            ]
+          }
+        }
+      }
+    ]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 模型性能图
+function initModelPerformanceChart() {
+  const el = document.getElementById('modelPerformanceChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: {
+      data: ['准确率', '召回率', 'F1分数'],
+      textStyle: { fontSize: 12, color: '#6B7280' }
+    },
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: ['缺陷识别', '任务预测', '风险预警', '创新评估'],
+      axisLine: { lineStyle: { color: '#E5E7EB' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value', max: 100,
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F3F4F6' } },
+      axisLabel: { color: '#6B7280', fontSize: 11, formatter: '{value}%' }
+    },
+    series: [
+      { name: '准确率', type: 'bar', data: [92.5, 87.3, 89.1, 85.0], itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#60A5FA' }, { offset: 1, color: '#3B82F6' }] }, borderRadius: [4,4,0,0], shadowBlur: 4, shadowColor: 'rgba(59,130,246,0.2)', shadowOffsetY: 2 } },
+      { name: '召回率', type: 'bar', data: [88.2, 84.5, 86.3, 82.1], itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#34D399' }, { offset: 1, color: '#10B981' }] }, borderRadius: [4,4,0,0], shadowBlur: 4, shadowColor: 'rgba(16,185,129,0.2)', shadowOffsetY: 2 } },
+      { name: 'F1分数', type: 'bar', data: [90.3, 85.9, 87.7, 83.5], itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#FBBF24' }, { offset: 1, color: '#F59E0B' }] }, borderRadius: [4,4,0,0], shadowBlur: 4, shadowColor: 'rgba(245,158,11,0.2)', shadowOffsetY: 2 } }
+    ]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 预测调用统计
+function initPredictionStatsChart() {
+  const el = document.getElementById('predictionStatsChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+    legend: { orient: 'vertical', left: 'left', textStyle: { fontSize: 12, color: '#6B7280' } },
+    series: [{
+      type: 'pie',
+      radius: ['45%', '70%'],
+      center: ['60%', '50%'],
+      avoidLabelOverlap: false,
+      itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+      label: { show: false },
+      emphasis: {
+        scale: true,
+        scaleSize: 8,
+        label: { show: true, fontSize: 14, fontWeight: 600, color: '#374151' }
+      },
+      data: [
+        { value: 1048, name: '缺陷识别', itemStyle: { color: '#3B82F6' } },
+        { value: 735, name: '任务预测', itemStyle: { color: '#10B981' } },
+        { value: 580, name: '风险预警', itemStyle: { color: '#F59E0B' } },
+        { value: 484, name: '创新评估', itemStyle: { color: '#8B5CF6' } },
+        { value: 300, name: '其他', itemStyle: { color: '#94A3B8' } }
+      ]
+    },
+    {
+      type: 'pie',
+      radius: ['0%', '0%'],
+      center: ['60%', '50%'],
+      silent: true,
+      label: {
+        show: true,
+        position: 'center',
+        formatter: function() { return '{total|3147}\n{label|总调用次数}'; },
+        rich: {
+          total: { fontSize: 22, fontWeight: 700, color: '#1F2937', lineHeight: 30 },
+          label: { fontSize: 11, color: '#6B7280', lineHeight: 18 }
+        }
+      },
+      data: [{ value: 3147 }]
+    }]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 创新能力详情图
+function initInnovationDetailChart() {
+  const el = document.getElementById('innovationDetailChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    grid: { left: '3%', right: '10%', bottom: '3%', containLabel: true },
+    xAxis: {
+      type: 'value', max: 100,
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F3F4F6' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'category',
+      data: ['成果价值', '团队能力', '效率表现', '质量水平', '研发活跃度', '技术复杂度'],
+      axisLine: { lineStyle: { color: '#E5E7EB' } },
+      axisLabel: { color: '#4B5563', fontSize: 12 }
+    },
+    series: [{
+      type: 'bar',
+      data: [87, 80, 75, 92, 78, 85],
+      barWidth: 20,
+      itemStyle: {
+        color: {
+          type: 'linear', x: 0, y: 0, x2: 1, y2: 0,
+          colorStops: [
+            { offset: 0, color: '#3B82F6' },
+            { offset: 1, color: '#60A5FA' }
+          ]
+        },
+        borderRadius: [0, 4, 4, 0],
+        shadowBlur: 4,
+        shadowColor: 'rgba(59,130,246,0.2)',
+        shadowOffsetX: 2
+      },
+      label: {
+        show: true,
+        position: 'right',
+        color: '#3B82F6',
+        fontWeight: 600,
+        fontSize: 12
+      }
+    }]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 成果转化趋势图
+function initTransformationTrendChart() {
+  const el = document.getElementById('transformationTrendChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['新增成果', '成功转化', '转化率'],
+      right: 0,
+      top: 0,
+      textStyle: { fontSize: 12, color: '#6B7280' }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      top: '15%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月'],
+      axisLine: { lineStyle: { color: '#E5E7EB' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    yAxis: [
+      {
+        type: 'value',
+        axisLine: { show: false },
+        splitLine: { lineStyle: { color: '#F3F4F6' } },
+        axisLabel: { color: '#6B7280', fontSize: 11 }
+      },
+      {
+        type: 'value',
+        max: 100,
+        axisLine: { show: false },
+        splitLine: { show: false },
+        axisLabel: { color: '#6B7280', fontSize: 11, formatter: '{value}%' }
+      }
+    ],
+    series: [
+      {
+        name: '新增成果',
+        type: 'bar',
+        data: [3, 5, 4, 6, 5, 7, 6, 8],
+        itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#60A5FA' }, { offset: 1, color: '#3B82F6' }] }, borderRadius: [4, 4, 0, 0], shadowBlur: 3, shadowColor: 'rgba(59,130,246,0.15)', shadowOffsetY: 2 },
+        barWidth: 16
+      },
+      {
+        name: '成功转化',
+        type: 'bar',
+        data: [2, 3, 3, 4, 4, 5, 4, 6],
+        itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#34D399' }, { offset: 1, color: '#10B981' }] }, borderRadius: [4, 4, 0, 0], shadowBlur: 3, shadowColor: 'rgba(16,185,129,0.15)', shadowOffsetY: 2 },
+        barWidth: 16
+      },
+      {
+        name: '转化率',
+        type: 'line',
+        yAxisIndex: 1,
+        smooth: true,
+        data: [66.7, 60, 75, 66.7, 80, 71.4, 66.7, 75],
+        lineStyle: { color: '#F59E0B', width: 2.5 },
+        itemStyle: { color: '#F59E0B' },
+        symbolSize: 6,
+        emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(245,158,11,0.3)' } },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(245, 158, 11, 0.15)' },
+              { offset: 1, color: 'rgba(245, 158, 11, 0.01)' }
+            ]
+          }
+        }
+      }
+    ]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// ===== AI聊天功能 =====
+const aiResponses = {
+  'tech_review': [
+    '好的，我来帮您进行技术方案评审。请提供您的技术方案文档或描述以下信息：\n\n1. 项目背景与目标\n2. 整体架构设计\n3. 技术栈选型\n4. 核心模块设计\n5. 数据存储方案\n\n收到后我将从可行性、安全性、可扩展性、性能等维度进行专业评估。',
+    '基于您提供的技术方案，我的评审意见如下：\n\n**✅ 优点：**\n- 微服务架构设计合理，便于独立部署和扩展\n- 技术栈选型成熟，社区支持良好\n- 数据库分库分表方案考虑周全\n\n**⚠️ 风险点：**\n- 服务间通信复杂度较高，建议引入服务网格\n- 缓存策略需要进一步细化，防止缓存击穿\n- 缺少容灾备份方案说明\n\n**💡 建议：**\n1. 引入API网关统一管理入口流量\n2. 增加全链路监控与日志采集\n3. 制定详细的灰度发布策略\n\n需要我深入分析某个具体模块吗？'
+  ],
+  'code_review': [
+    '好的，我来帮您进行代码审查。请粘贴您的代码片段，我会从以下维度进行分析：\n\n- 代码逻辑正确性\n- 性能优化建议\n- 安全漏洞检测\n- 代码规范与可读性\n- 潜在的Bug风险',
+    '我已分析您提供的代码，审查结果如下：\n\n**✅ 做得好的地方：**\n- 函数命名清晰，可读性良好\n- 异常处理基本到位\n- 注释比较完整\n\n**🔧 改进建议：**\n1. 第45行存在SQL注入风险，建议使用参数化查询\n2. 循环内频繁创建对象，可以提取到外部优化性能\n3. 建议增加单元测试覆盖率\n4. 第78行的递归调用可能导致栈溢出\n\n**📊 代码质量评分：78/100**\n\n需要我帮您生成优化后的代码吗？'
+  ],
+  'doc_summary': [
+    '好的，我来帮您进行文档摘要。请粘贴您的文档内容，我会帮您提炼：\n\n- 核心观点与结论\n- 关键数据与指标\n- 主要行动项\n- 重要时间节点\n- 风险与问题',
+    '以下是为您生成的文档摘要：\n\n**📌 核心要点：**\n本文档提出了新一代智能研发平台的建设方案，旨在通过AI技术提升研发效能30%以上。\n\n**📊 关键数据：**\n- 目标用户：500+研发人员\n- 预期效果：研发效能提升30%\n- 建设周期：6个月\n- 预算投入：500万\n\n**🎯 行动项：**\n1. Q1完成需求调研与技术选型\n2. Q2完成核心模块开发\n3. Q3完成测试与试点上线\n4. Q4全面推广与优化\n\n**⚠️ 主要风险：**\n- 技术整合难度高\n- 用户接受度待验证\n\n需要我针对某个部分展开说明吗？'
+  ],
+  'requirement': [
+    '好的，我是您的需求分析助手。请描述您的需求，我会帮您：\n\n- 拆解功能模块\n- 识别依赖关系\n- 估算开发工作量\n- 识别潜在风险\n- 生成任务分解建议',
+    '根据您的需求描述，我已完成需求分析：\n\n**📋 功能模块拆解：**\n1. 用户管理模块（用户注册、登录、权限）\n2. 数据管理模块（数据上传、存储、查询）\n3. 分析引擎模块（算法调用、结果展示）\n4. 可视化模块（图表、报表）\n\n**🔗 依赖关系：**\n- 用户管理 → 数据管理 → 分析引擎 → 可视化\n\n**<svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 工作量估算：**\n- 总工时：约 480 人时\n- 预计周期：8周（6人团队）\n\n**⚠️ 关键风险：**\n1. 算法接口联调复杂度高\n2. 大数据量下的性能挑战\n\n**📝 建议下一步：**\n制定详细的技术方案，明确接口规范。\n\n需要我帮您生成更详细的任务分解吗？'
+  ],
+  'testing': [
+    '好的，我来帮您生成测试用例。请描述您需要测试的功能或需求，我会生成：\n\n- 功能测试用例\n- 边界条件测试\n- 异常场景测试\n- 性能测试要点\n- 安全测试建议',
+    '为您生成的测试用例如下：\n\n**✅ 功能测试用例（15条）：**\n1. 正常登录流程 - 输入正确用户名密码\n2. 错误密码登录 - 验证错误提示\n3. 空用户名提交 - 验证前端校验\n4. 记住密码功能 - 验证下次自动填充\n5. 登出功能 - 验证会话清除\n...\n\n**🔲 边界测试（6条）：**\n1. 用户名最大长度限制\n2. 密码特殊字符支持\n3. 并发登录限制\n\n**❌ 异常测试（5条）：**\n1. 网络中断时的登录处理\n2. 服务器错误时的提示\n3. SQL注入尝试拦截\n\n**⚡ 性能测试要点：**\n- 单接口响应时间 < 200ms\n- 支持1000并发用户\n\n**🔒 安全测试建议：**\n- 密码传输加密\n- CSRF防护验证\n- 登录失败次数限制\n\n需要我生成某个模块更详细的测试用例吗？'
+  ],
+  'general': [
+    '您好！我是智研AI助手，可以为您提供技术方案评审、代码解释、文档摘要、需求分析、测试用例生成等专业服务。请问有什么可以帮您的吗？'
+  ]
+};
+
+let currentSession = 'general';
+let isTyping = false;
+let chatHistory = [];
+let useRealAI = true;
+
+function addMessage(role, content) {
+  const messages = document.getElementById('chatMessages');
+  if (!messages) return;
+  
+  const isAI = role === 'ai';
+  const avatarText = isAI ? 'AI' : '我';
+  
+  const messageHtml = `
+    <div class="chat-message ${role}">
+      <div class="chat-message-avatar">${avatarText}</div>
+      <div class="chat-message-content">${content.replace(/\n/g, '<br>')}</div>
+    </div>
+  `;
+  
+  messages.insertAdjacentHTML('beforeend', messageHtml);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function showTyping() {
+  isTyping = true;
+  const messages = document.getElementById('chatMessages');
+  if (!messages) return;
+  
+  const typingHtml = `
+    <div class="chat-message ai" id="typingIndicator">
+      <div class="chat-message-avatar">AI</div>
+      <div class="chat-message-content">
+        <span style="display: inline-block; animation: typingBounce 1.4s infinite;">正在思考</span>
+        <span style="display: inline-block; animation: typingBounce 1.4s infinite 0.2s;">.</span>
+        <span style="display: inline-block; animation: typingBounce 1.4s infinite 0.4s;">.</span>
+        <span style="display: inline-block; animation: typingBounce 1.4s infinite 0.6s;">.</span>
+      </div>
+    </div>
+  `;
+  messages.insertAdjacentHTML('beforeend', typingHtml);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function hideTyping() {
+  isTyping = false;
+  const typingEl = document.getElementById('typingIndicator');
+  if (typingEl) typingEl.remove();
+}
+
+function startAISession(type) {
+  currentSession = type;
+  chatHistory = [];
+  const subtitles = {
+    'tech_review': '技术方案评审专家',
+    'code_review': '代码审查专家',
+    'doc_summary': '文档摘要助手',
+    'requirement': '需求分析专家',
+    'testing': '测试用例生成器',
+    'general': '在线 · 随时为您服务'
+  };
+  document.getElementById('chatSubtitle').textContent = subtitles[type] || '在线 · 随时为您服务';
+  
+  const messages = document.getElementById('chatMessages');
+  messages.innerHTML = '';
+  
+  const welcomeMessages = {
+    'tech_review': '您好！我是技术方案评审专家。请描述您的技术方案，我将从可行性、安全性、可扩展性、性能等多个维度为您提供专业的评审建议。',
+    'code_review': '您好！我是代码审查专家。请粘贴您的代码片段，我会帮您分析代码逻辑、识别潜在问题、提供优化建议，并检查代码规范与安全性。',
+    'doc_summary': '您好！我是文档摘要助手。请粘贴您需要处理的文档内容，我会为您提炼核心要点、生成结构化摘要、梳理行动项和关键结论。',
+    'requirement': '您好！我是需求分析专家。请描述您的业务需求，我会帮您拆解功能模块、识别依赖关系、估算工作量，并识别潜在风险点。',
+    'testing': '您好！我是测试用例生成器。请描述您需要测试的功能模块，我会为您生成功能测试、边界测试、异常场景测试等多维度的测试用例。',
+    'general': '您好！我是智研AI助手，可以为您提供技术方案评审、代码解释、文档摘要、需求分析、测试用例生成等专业服务。请问有什么可以帮您的吗？'
+  };
+  
+  const welcome = welcomeMessages[type] || welcomeMessages['general'];
+  chatHistory.push({ role: 'assistant', content: welcome });
+  addMessage('ai', welcome);
+  
+  setTimeout(() => {
+    messages.scrollTop = messages.scrollHeight;
+  }, 100);
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  
+  if (!text || isTyping) return;
+  
+  addMessage('user', text);
+  chatHistory.push({ role: 'user', content: text });
+  input.value = '';
+  input.style.height = 'auto';
+  
+  showTyping();
+  
+  const sessionPrompts = {
+    'tech_review': '你是技术架构师。直接分析方案的技术可行性、风险和优化方向，不要客套话和模板格式。',
+    'code_review': '你是代码审查专家。直接指出问题、风险和建议，用代码示例说明，不要客套。',
+    'doc_summary': '你是文档助手。提炼核心要点和行动项，简洁直接。',
+    'requirement': '你是需求分析师。拆解功能、识别依赖、评估风险，给具体建议。',
+    'testing': '你是测试工程师。生成具体测试用例，覆盖功能、边界、异常场景。',
+    'general': '你是智研工坊的AI助手，像同事一样自然聊天。直接回答，说人话，不要模板和表情。'
+  };
+  
+  const systemPrompt = sessionPrompts[currentSession] || sessionPrompts['general'];
+  const apiMessages = [
+    { role: 'system', content: systemPrompt },
+    ...chatHistory.slice(-10)
+  ];
+  
+  try {
+    if (useRealAI) {
+      const response = await fetch(API_BASE + '/api/ai/chat', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + API_TOKEN
+        },
+        body: JSON.stringify({
+          messages: apiMessages,
+          stream: false
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+      
+      const data = await response.json();
+      hideTyping();
+      
+      const reply = data.reply || data.content || data.message || '抱歉，我暂时无法回答这个问题。';
+      chatHistory.push({ role: 'assistant', content: reply });
+      addMessage('ai', reply);
+    } else {
+      throw new Error('Mock mode');
+    }
+  } catch (err) {
+    console.log('AI API unavailable, using mock response:', err.message);
+    setTimeout(() => {
+      hideTyping();
+      const mockReply = getMockResponse(text);
+      chatHistory.push({ role: 'assistant', content: mockReply });
+      addMessage('ai', mockReply);
+    }, 1200 + Math.random() * 800);
+  }
+}
+
+function getMockResponse(message) {
+  // AI服务不可用时的简要回退
+  return '抱歉，AI服务暂时不可用。请稍后重试，或检查网络连接。';
+}
+
+function sendQuickMessage(text) {
+  const input = document.getElementById('chatInput');
+  input.value = text;
+  sendMessage();
+}
+
+function handleChatKeydown(event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+  
+  const textarea = event.target;
+  setTimeout(() => {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+  }, 0);
+}
+
+function clearChat() {
+  if (confirm('确定要清空当前对话吗？')) {
+    const messages = document.getElementById('chatMessages');
+    messages.innerHTML = '';
+    startAISession(currentSession);
+  }
+}
+
+// 页面切换时初始化对应图表
+// 任务完成趋势图
+function initTaskTrendChart() {
+  const el = document.getElementById('taskTrendChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: { data: ['新建任务', '完成任务'], textStyle: { fontSize: 12, color: '#6B7280' } },
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      axisLine: { lineStyle: { color: '#E5E7EB' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F3F4F6' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    series: [
+      { name: '新建任务', type: 'bar', data: [12, 15, 8, 18, 14, 5, 3], itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#60A5FA' }, { offset: 1, color: '#3B82F6' }] }, borderRadius: [4, 4, 0, 0], shadowBlur: 3, shadowColor: 'rgba(59,130,246,0.15)', shadowOffsetY: 2 }, barWidth: 16 },
+      { name: '完成任务', type: 'bar', data: [10, 12, 14, 11, 16, 4, 2], itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#34D399' }, { offset: 1, color: '#10B981' }] }, borderRadius: [4, 4, 0, 0], shadowBlur: 3, shadowColor: 'rgba(16,185,129,0.15)', shadowOffsetY: 2 }, barWidth: 16 }
+    ]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 团队任务分布图
+function initTeamTaskChart() {
+  const el = document.getElementById('teamTaskChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'item', formatter: '{b}: {c}个 ({d}%)' },
+    legend: { orient: 'vertical', left: 'left', textStyle: { fontSize: 12, color: '#6B7280' } },
+    series: [{
+      type: 'pie',
+      radius: ['40%', '70%'],
+      center: ['60%', '50%'],
+      avoidLabelOverlap: false,
+      itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+      label: { show: false },
+      emphasis: {
+        scale: true,
+        scaleSize: 8,
+        label: { show: true, fontSize: 14, fontWeight: 600, color: '#374151' }
+      },
+      data: [
+        { value: 18, name: '李明', itemStyle: { color: '#3B82F6' } },
+        { value: 15, name: '王芳', itemStyle: { color: '#10B981' } },
+        { value: 14, name: '张强', itemStyle: { color: '#F59E0B' } },
+        { value: 12, name: '刘洋', itemStyle: { color: '#8B5CF6' } },
+        { value: 11, name: '陈杰', itemStyle: { color: '#EC4899' } },
+        { value: 10, name: '赵敏', itemStyle: { color: '#06B6D4' } },
+        { value: 16, name: '孙伟', itemStyle: { color: '#6366F1' } },
+        { value: 14, name: '周鹏', itemStyle: { color: '#F97316' } }
+      ]
+    },
+    {
+      type: 'pie',
+      radius: ['0%', '0%'],
+      center: ['60%', '50%'],
+      silent: true,
+      label: {
+        show: true,
+        position: 'center',
+        formatter: function() { return '{total|110}\n{label|总任务数}'; },
+        rich: {
+          total: { fontSize: 22, fontWeight: 700, color: '#1F2937', lineHeight: 30 },
+          label: { fontSize: 11, color: '#6B7280', lineHeight: 18 }
+        }
+      },
+      data: [{ value: 110 }]
+    }]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 缺陷分类分布图
+function initBugCategoryChart() {
+  const el = document.getElementById('bugCategoryChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'item', formatter: '{b}: {c}个 ({d}%)' },
+    legend: { orient: 'vertical', left: 'left', textStyle: { fontSize: 12, color: '#6B7280' } },
+    series: [{
+      type: 'pie',
+      radius: ['35%', '65%'],
+      center: ['60%', '50%'],
+      itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+      label: { show: true, formatter: '{b}: {c}', fontSize: 11, color: '#4B5563' },
+      emphasis: {
+        scale: true,
+        scaleSize: 8,
+        label: { fontSize: 13, fontWeight: 600 }
+      },
+      data: [
+        { value: 8, name: '安全漏洞', itemStyle: { color: '#EF4444' } },
+        { value: 6, name: '性能问题', itemStyle: { color: '#F59E0B' } },
+        { value: 5, name: '功能缺陷', itemStyle: { color: '#3B82F6' } },
+        { value: 4, name: 'UI问题', itemStyle: { color: '#10B981' } },
+        { value: 4, name: '兼容性问题', itemStyle: { color: '#8B5CF6' } },
+        { value: 3, name: '数据问题', itemStyle: { color: '#EC4899' } },
+        { value: 2, name: '其他', itemStyle: { color: '#9CA3AF' } }
+      ]
+    }]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 缺陷趋势分析图
+function initBugTrendChart() {
+  const el = document.getElementById('bugTrendChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['新增缺陷', '修复缺陷', '遗留缺陷'], textStyle: { fontSize: 12, color: '#6B7280' } },
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: ['第1周', '第2周', '第3周', '第4周', '第5周', '第6周', '第7周', '第8周'],
+      axisLine: { lineStyle: { color: '#E5E7EB' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F3F4F6' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    series: [
+      { name: '新增缺陷', type: 'line', smooth: true, data: [8, 6, 10, 5, 7, 4, 6, 3], lineStyle: { color: '#EF4444', width: 2.5 }, itemStyle: { color: '#EF4444' }, symbolSize: 6, emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(239,68,68,0.3)' } }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(239,68,68,0.15)' }, { offset: 1, color: 'rgba(239,68,68,0.01)' }] } } },
+      { name: '修复缺陷', type: 'line', smooth: true, data: [5, 7, 6, 8, 6, 9, 7, 8], lineStyle: { color: '#10B981', width: 2.5 }, itemStyle: { color: '#10B981' }, symbolSize: 6, emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(16,185,129,0.3)' } }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(16,185,129,0.15)' }, { offset: 1, color: 'rgba(16,185,129,0.01)' }] } } },
+      { name: '遗留缺陷', type: 'line', smooth: true, data: [32, 31, 35, 32, 33, 28, 27, 22], lineStyle: { color: '#F59E0B', width: 2.5 }, itemStyle: { color: '#F59E0B' }, symbolSize: 6, emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(245,158,11,0.3)' } }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(245,158,11,0.15)' }, { offset: 1, color: 'rgba(245,158,11,0.01)' }] } } }
+    ]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 实时请求流量图
+function initRealtimeTrafficChart() {
+  const el = document.getElementById('realtimeTrafficChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['GET请求', 'POST请求'], textStyle: { fontSize: 12, color: '#6B7280' } },
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['14:20', '14:22', '14:24', '14:26', '14:28', '14:30', '14:32'],
+      axisLine: { lineStyle: { color: '#E5E7EB' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F3F4F6' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    series: [
+      { name: 'GET请求', type: 'line', smooth: true, data: [320, 332, 301, 334, 390, 330, 320], lineStyle: { color: '#3B82F6', width: 2.5 }, itemStyle: { color: '#3B82F6' }, symbolSize: 6, emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(59,130,246,0.3)' } }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(59,130,246,0.2)' }, { offset: 1, color: 'rgba(59,130,246,0.01)' }] } } },
+      { name: 'POST请求', type: 'line', smooth: true, data: [220, 182, 191, 234, 290, 330, 310], lineStyle: { color: '#10B981', width: 2.5 }, itemStyle: { color: '#10B981' }, symbolSize: 6, emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(16,185,129,0.3)' } }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(16,185,129,0.2)' }, { offset: 1, color: 'rgba(16,185,129,0.01)' }] } } }
+    ]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 系统资源监控图
+function initSystemResourceChart() {
+  const el = document.getElementById('systemResourceChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['CPU使用率', '内存使用率'], textStyle: { fontSize: 12, color: '#6B7280' } },
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['14:20', '14:22', '14:24', '14:26', '14:28', '14:30', '14:32'],
+      axisLine: { lineStyle: { color: '#E5E7EB' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      max: 100,
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F3F4F6' } },
+      axisLabel: { color: '#6B7280', fontSize: 11, formatter: '{value}%' }
+    },
+    series: [
+      { name: 'CPU使用率', type: 'line', smooth: true, data: [45, 52, 48, 58, 62, 55, 50], lineStyle: { color: '#8B5CF6', width: 2.5 }, itemStyle: { color: '#8B5CF6' }, symbolSize: 6, emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(139,92,246,0.3)' } }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(139,92,246,0.2)' }, { offset: 1, color: 'rgba(139,92,246,0.01)' }] } } },
+      { name: '内存使用率', type: 'line', smooth: true, data: [62, 64, 65, 68, 70, 67, 65], lineStyle: { color: '#F59E0B', width: 2.5 }, itemStyle: { color: '#F59E0B' }, symbolSize: 6, emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(245,158,11,0.3)' } }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(245,158,11,0.2)' }, { offset: 1, color: 'rgba(245,158,11,0.01)' }] } } }
+    ]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// AI模型调用监控图
+function initAiModelMonitorChart() {
+  const el = document.getElementById('aiModelMonitorChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: { data: ['缺陷识别', '任务预测', '风险预警', '创新评估'], textStyle: { fontSize: 11, color: '#6B7280' } },
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      axisLine: { lineStyle: { color: '#E5E7EB' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F3F4F6' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    series: [
+      { name: '缺陷识别', type: 'bar', stack: 'total', data: [120, 132, 101, 134, 90, 80, 70], itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#60A5FA' }, { offset: 1, color: '#3B82F6' }] } }, barWidth: 20 },
+      { name: '任务预测', type: 'bar', stack: 'total', data: [80, 92, 71, 84, 60, 50, 40], itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#34D399' }, { offset: 1, color: '#10B981' }] } }, barWidth: 20 },
+      { name: '风险预警', type: 'bar', stack: 'total', data: [60, 52, 41, 64, 50, 30, 25], itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#FBBF24' }, { offset: 1, color: '#F59E0B' }] } }, barWidth: 20 },
+      { name: '创新评估', type: 'bar', stack: 'total', data: [40, 32, 31, 44, 30, 20, 15], itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#A78BFA' }, { offset: 1, color: '#8B5CF6' }] } }, barWidth: 20 }
+    ]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 数据要素流动监控图
+function initDataFlowChart() {
+  const el = document.getElementById('dataFlowChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['数据入库', '数据出库', '数据调用'], textStyle: { fontSize: 12, color: '#6B7280' } },
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['14:20', '14:22', '14:24', '14:26', '14:28', '14:30', '14:32'],
+      axisLine: { lineStyle: { color: '#E5E7EB' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F3F4F6' } },
+      axisLabel: { color: '#6B7280', fontSize: 11 }
+    },
+    series: [
+      { name: '数据入库', type: 'line', smooth: true, data: [150, 180, 160, 200, 170, 190, 175], lineStyle: { color: '#3B82F6', width: 2.5 }, itemStyle: { color: '#3B82F6' }, symbolSize: 6, emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(59,130,246,0.3)' } }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(59,130,246,0.2)' }, { offset: 1, color: 'rgba(59,130,246,0.01)' }] } } },
+      { name: '数据出库', type: 'line', smooth: true, data: [120, 140, 130, 160, 150, 170, 155], lineStyle: { color: '#10B981', width: 2.5 }, itemStyle: { color: '#10B981' }, symbolSize: 6, emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(16,185,129,0.3)' } }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(16,185,129,0.2)' }, { offset: 1, color: 'rgba(16,185,129,0.01)' }] } } },
+      { name: '数据调用', type: 'line', smooth: true, data: [300, 350, 320, 400, 360, 380, 340], lineStyle: { color: '#F59E0B', width: 2.5 }, itemStyle: { color: '#F59E0B' }, symbolSize: 6, emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(245,158,11,0.3)' } }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(245,158,11,0.2)' }, { offset: 1, color: 'rgba(245,158,11,0.01)' }] } } }
+    ]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 团队效能趋势图
+function initTeamEfficiencyTrendChart() {
+  const el = document.getElementById('teamEfficiencyTrendChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['团队效能指数', '任务完成率', '代码质量分'], textStyle: { fontSize: 12, color: '#64748B' } },
+    grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['第1周', '第2周', '第3周', '第4周', '第5周', '第6周', '第7周', '第8周'],
+      axisLine: { lineStyle: { color: '#E2E8F0' } },
+      axisLabel: { color: '#64748B', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      max: 100,
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F1F5F9' } },
+      axisLabel: { color: '#64748B', fontSize: 11 }
+    },
+    series: [
+      { 
+        name: '团队效能指数', 
+        type: 'line', 
+        smooth: true, 
+        data: [72, 75, 78, 76, 80, 83, 85, 86.5], 
+        lineStyle: { color: '#2563EB', width: 3 },
+        itemStyle: { color: '#2563EB' },
+        symbolSize: 6,
+        emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(37,99,235,0.3)' } },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(37,99,235,0.2)' },
+              { offset: 1, color: 'rgba(37,99,235,0.01)' }
+            ]
+          }
+        }
+      },
+      { 
+        name: '任务完成率', 
+        type: 'line', 
+        smooth: true, 
+        data: [85, 82, 88, 86, 90, 89, 91, 92.3], 
+        lineStyle: { color: '#059669', width: 2.5 },
+        itemStyle: { color: '#059669' },
+        symbolSize: 6,
+        emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(5,150,105,0.3)' } },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(5,150,105,0.15)' },
+              { offset: 1, color: 'rgba(5,150,105,0.01)' }
+            ]
+          }
+        }
+      },
+      { 
+        name: '代码质量分', 
+        type: 'line', 
+        smooth: true, 
+        data: [68, 72, 70, 75, 78, 80, 82, 84], 
+        lineStyle: { color: '#7C3AED', width: 2.5 },
+        itemStyle: { color: '#7C3AED' },
+        symbolSize: 6,
+        emphasis: { focus: 'series', itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(124,58,237,0.3)' } },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(124,58,237,0.15)' },
+              { offset: 1, color: 'rgba(124,58,237,0.01)' }
+            ]
+          }
+        }
+      }
+    ]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 技术栈分布图
+function initTechStackChart() {
+  const el = document.getElementById('techStackChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'item', formatter: '{b}: {c}个项目 ({d}%)' },
+    series: [{
+      type: 'pie',
+      radius: ['45%', '70%'],
+      center: ['50%', '50%'],
+      avoidLabelOverlap: false,
+      itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+      label: { show: false },
+      labelLine: { show: false },
+      emphasis: {
+        scale: true,
+        scaleSize: 8,
+        label: { show: true, fontSize: 14, fontWeight: 600, color: '#374151' }
+      },
+      data: [
+        { value: 12, name: 'Java', itemStyle: { color: '#2563EB' } },
+        { value: 10, name: 'Python', itemStyle: { color: '#059669' } },
+        { value: 8, name: '前端', itemStyle: { color: '#D97706' } },
+        { value: 6, name: 'Go', itemStyle: { color: '#7C3AED' } },
+        { value: 5, name: '数据库', itemStyle: { color: '#0891B2' } },
+        { value: 7, name: '运维', itemStyle: { color: '#DB2777' } }
+      ]
+    },
+    {
+      type: 'pie',
+      radius: ['0%', '0%'],
+      center: ['50%', '50%'],
+      silent: true,
+      label: {
+        show: true,
+        position: 'center',
+        formatter: function() { return '{total|48}\n{label|总项目数}'; },
+        rich: {
+          total: { fontSize: 22, fontWeight: 700, color: '#1F2937', lineHeight: 30 },
+          label: { fontSize: 11, color: '#6B7280', lineHeight: 18 }
+        }
+      },
+      data: [{ value: 48 }]
+    }]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 工作负载分布图
+function initWorkloadChart() {
+  const el = document.getElementById('workloadChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    grid: { left: '3%', right: '4%', bottom: '3%', top: '5%', containLabel: true },
+    xAxis: {
+      type: 'value',
+      max: 100,
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F1F5F9' } },
+      axisLabel: { color: '#64748B', fontSize: 10 }
+    },
+    yAxis: {
+      type: 'category',
+      data: ['高', '中高', '中等', '较低'],
+      axisLine: { lineStyle: { color: '#E2E8F0' } },
+      axisLabel: { color: '#64748B', fontSize: 11 }
+    },
+    series: [{
+      type: 'bar',
+      data: [
+        { value: 85, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#F87171' }, { offset: 1, color: '#DC2626' }] }, borderRadius: [0, 4, 4, 0], shadowBlur: 3, shadowColor: 'rgba(220,38,38,0.2)', shadowOffsetX: 2 } },
+        { value: 65, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#FBBF24' }, { offset: 1, color: '#D97706' }] }, borderRadius: [0, 4, 4, 0], shadowBlur: 3, shadowColor: 'rgba(217,119,6,0.2)', shadowOffsetX: 2 } },
+        { value: 45, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#60A5FA' }, { offset: 1, color: '#2563EB' }] }, borderRadius: [0, 4, 4, 0], shadowBlur: 3, shadowColor: 'rgba(37,99,235,0.2)', shadowOffsetX: 2 } },
+        { value: 25, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#34D399' }, { offset: 1, color: '#059669' }] }, borderRadius: [0, 4, 4, 0], shadowBlur: 3, shadowColor: 'rgba(5,150,105,0.2)', shadowOffsetX: 2 } }
+      ],
+      barWidth: 16
+    }]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 代码质量指标图
+function initCodeQualityChart() {
+  const el = document.getElementById('codeQualityChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: {
+      trigger: 'item'
+    },
+    radar: {
+      indicator: [
+        { name: '可读性', max: 100 },
+        { name: '可维护', max: 100 },
+        { name: '规范性', max: 100 },
+        { name: '覆盖率', max: 100 },
+        { name: '性能', max: 100 }
+      ],
+      radius: '60%',
+      axisName: { color: '#64748B', fontSize: 10 },
+      splitLine: { lineStyle: { color: '#E2E8F0' } },
+      splitArea: { areaStyle: { color: ['#fff', '#F8FAFC'] } },
+      axisLine: { lineStyle: { color: '#E2E8F0' } }
+    },
+    series: [{
+      type: 'radar',
+      data: [{
+        value: [88, 82, 90, 76, 85],
+        name: '代码质量',
+        areaStyle: {
+          color: {
+            type: 'radial', x: 0.5, y: 0.5, r: 0.5,
+            colorStops: [
+              { offset: 0, color: 'rgba(37,99,235,0.35)' },
+              { offset: 1, color: 'rgba(37,99,235,0.05)' }
+            ]
+          }
+        },
+        lineStyle: { color: '#2563EB', width: 2 },
+        itemStyle: { color: '#2563EB' },
+        label: {
+          show: true,
+          formatter: function(params) { return params.value; },
+          color: '#2563EB',
+          fontSize: 10,
+          fontWeight: 600
+        }
+      }, {
+        value: [75, 70, 78, 65, 72],
+        name: '行业基准',
+        areaStyle: {
+          color: {
+            type: 'radial', x: 0.5, y: 0.5, r: 0.5,
+            colorStops: [
+              { offset: 0, color: 'rgba(16,185,129,0.15)' },
+              { offset: 1, color: 'rgba(16,185,129,0.02)' }
+            ]
+          }
+        },
+        lineStyle: { color: '#10B981', width: 1.5, type: 'dashed' },
+        itemStyle: { color: '#10B981' }
+      }]
+    }]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 知识图谱图
+function initKnowledgeGraphChart() {
+  const el = document.getElementById('knowledgeGraphChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  
+  const categories = [
+    { name: '技术领域', itemStyle: { color: '#2563EB' } },
+    { name: '项目', itemStyle: { color: '#059669' } },
+    { name: '人员', itemStyle: { color: '#7C3AED' } },
+    { name: '知识', itemStyle: { color: '#D97706' } }
+  ];
+  
+  const nodes = [
+    { name: '人工智能', category: 0, symbolSize: 50, value: 100 },
+    { name: '云计算', category: 0, symbolSize: 45, value: 90 },
+    { name: '大数据', category: 0, symbolSize: 40, value: 80 },
+    { name: '区块链', category: 0, symbolSize: 35, value: 70 },
+    { name: '物联网', category: 0, symbolSize: 30, value: 60 },
+    { name: '智能数据分析平台', category: 1, symbolSize: 40, value: 85 },
+    { name: '云原生微服务架构', category: 1, symbolSize: 38, value: 80 },
+    { name: '大数据治理平台', category: 1, symbolSize: 36, value: 75 },
+    { name: '李明', category: 2, symbolSize: 30, value: 65 },
+    { name: '王芳', category: 2, symbolSize: 28, value: 60 },
+    { name: '张强', category: 2, symbolSize: 26, value: 55 },
+    { name: '机器学习算法', category: 3, symbolSize: 25, value: 50 },
+    { name: '微服务设计模式', category: 3, symbolSize: 24, value: 48 },
+    { name: '数据湖架构', category: 3, symbolSize: 22, value: 45 }
+  ];
+  
+  const links = [
+    { source: '人工智能', target: '智能数据分析平台', lineStyle: { width: 2 } },
+    { source: '云计算', target: '云原生微服务架构', lineStyle: { width: 2 } },
+    { source: '大数据', target: '大数据治理平台', lineStyle: { width: 2 } },
+    { source: '人工智能', target: '机器学习算法', lineStyle: { width: 1.5 } },
+    { source: '云计算', target: '微服务设计模式', lineStyle: { width: 1.5 } },
+    { source: '大数据', target: '数据湖架构', lineStyle: { width: 1.5 } },
+    { source: '智能数据分析平台', target: '李明', lineStyle: { width: 1.5 } },
+    { source: '云原生微服务架构', target: '王芳', lineStyle: { width: 1.5 } },
+    { source: '大数据治理平台', target: '张强', lineStyle: { width: 1.5 } },
+    { source: '李明', target: '机器学习算法', lineStyle: { width: 1 } },
+    { source: '王芳', target: '微服务设计模式', lineStyle: { width: 1 } },
+    { source: '张强', target: '数据湖架构', lineStyle: { width: 1 } },
+    { source: '人工智能', target: '大数据', lineStyle: { width: 1, type: 'dashed' } },
+    { source: '云计算', target: '区块链', lineStyle: { width: 1, type: 'dashed' } }
+  ];
+  
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: {},
+    legend: [{
+      data: categories.map(c => c.name),
+      textStyle: { color: '#64748B', fontSize: 12 }
+    }],
+    series: [{
+      type: 'graph',
+      layout: 'force',
+      data: nodes,
+      links: links,
+      categories: categories,
+      roam: true,
+      label: {
+        show: true,
+        position: 'right',
+        formatter: '{b}',
+        fontSize: 11,
+        color: '#334155'
+      },
+      lineStyle: {
+        color: '#CBD5E1',
+        curveness: 0.1
+      },
+      emphasis: {
+        focus: 'adjacency',
+        lineStyle: { width: 3 }
+      },
+      force: {
+        repulsion: 200,
+        edgeLength: 80,
+        gravity: 0.1
+      }
+    }]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+// 热门技术领域图
+function initTechDomainChart() {
+  const el = document.getElementById('techDomainChart');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const option = Object.assign({}, getChartTheme(), {
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    xAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#F1F5F9' } },
+      axisLabel: { color: '#64748B', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'category',
+      data: ['区块链', '物联网', '网络安全', '云计算', '大数据', '人工智能'],
+      axisLine: { lineStyle: { color: '#E2E8F0' } },
+      axisLabel: { color: '#334155', fontSize: 12, fontWeight: 500 }
+    },
+    series: [{
+      type: 'bar',
+      data: [
+        { value: 186, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#8B5CF6' }, { offset: 1, color: '#7C3AED' }] }, borderRadius: [0, 6, 6, 0], shadowBlur: 3, shadowColor: 'rgba(139,92,246,0.2)', shadowOffsetX: 2 } },
+        { value: 245, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#06B6D4' }, { offset: 1, color: '#0891B2' }] }, borderRadius: [0, 6, 6, 0], shadowBlur: 3, shadowColor: 'rgba(6,182,212,0.2)', shadowOffsetX: 2 } },
+        { value: 298, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#F87171' }, { offset: 1, color: '#DC2626' }] }, borderRadius: [0, 6, 6, 0], shadowBlur: 3, shadowColor: 'rgba(220,38,38,0.2)', shadowOffsetX: 2 } },
+        { value: 386, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#34D399' }, { offset: 1, color: '#059669' }] }, borderRadius: [0, 6, 6, 0], shadowBlur: 3, shadowColor: 'rgba(5,150,105,0.2)', shadowOffsetX: 2 } },
+        { value: 452, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#FBBF24' }, { offset: 1, color: '#D97706' }] }, borderRadius: [0, 6, 6, 0], shadowBlur: 3, shadowColor: 'rgba(217,119,6,0.2)', shadowOffsetX: 2 } },
+        { value: 568, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#60A5FA' }, { offset: 1, color: '#2563EB' }] }, borderRadius: [0, 6, 6, 0], shadowBlur: 3, shadowColor: 'rgba(37,99,235,0.2)', shadowOffsetX: 2 } }
+      ],
+      barWidth: 20,
+      label: {
+        show: true,
+        position: 'right',
+        color: '#334155',
+        fontSize: 12,
+        fontWeight: 600
+      }
+    }]
+  });
+  chart.setOption(option);
+  registerChart(chart);
+  fadeInChart(el);
+}
+
+function initChartsForPage(pageId) {
+  switch(pageId) {
+    case 'dashboard':
+      initInnovationRadarChart();
+      initEfficiencyTrendChart();
+      break;
+    case 'ai-decision':
+      initModelPerformanceChart();
+      initPredictionStatsChart();
+      break;
+    case 'innovation':
+      initInnovationDetailChart();
+      break;
+    case 'transformation':
+      initTransformationTrendChart();
+      break;
+    case 'tasks':
+      initTaskTrendChart();
+      initTeamTaskChart();
+      break;
+    case 'bugs':
+      initBugCategoryChart();
+      initBugTrendChart();
+      break;
+    case 'team-efficiency':
+      initTeamEfficiencyTrendChart();
+      initTechStackChart();
+      initWorkloadChart();
+      initCodeQualityChart();
+      break;
+    case 'knowledge-graph':
+      initKnowledgeGraphChart();
+      initTechDomainChart();
+      break;
+    case 'realtime':
+      initRealtimeTrafficChart();
+      initSystemResourceChart();
+      initAiModelMonitorChart();
+      initDataFlowChart();
+      break;
+  }
+}
+
+// 加载真实数据 - 驾驶舱
+async function loadDashboardRealData() {
+  const hasRealData = await initAppWithRealData();
+  if (!hasRealData) return;
+
+  const result = await apiGet('/api/dashboard/stats');
+  if (!result || !result.data) return;
+  const data = result.data;
+
+  // 更新统计卡片
+  const statCards = document.querySelectorAll('#page-dashboard .stat-card .stat-value');
+  if (statCards.length >= 6) {
+    statCards[2].textContent = data.total_projects || 0;
+    statCards[4].textContent = data.total_tasks || 0;
+    statCards[5].textContent = data.active_bugs || 0;
+  }
+
+  // 更新创新指数卡片
+  const scoreValue = document.querySelector('#page-dashboard .score-value');
+  if (scoreValue) {
+    const innovationScore = Math.round(70 + (data.completed_tasks / Math.max(data.total_tasks, 1)) * 20 + (data.total_projects * 1.5));
+    scoreValue.textContent = Math.min(innovationScore, 99);
+  }
+
+  // 更新研发效能
+  const effCard = document.querySelectorAll('#page-dashboard .stat-card')[1];
+  if (effCard) {
+    const effVal = data.total_tasks > 0 ? Math.round((data.completed_tasks / data.total_tasks) * 100) : 0;
+    effCard.querySelector('.stat-value').textContent = effVal + '%';
+  }
+
+  // 更新成果转化率
+  const transCard = document.querySelectorAll('#page-dashboard .stat-card')[3];
+  if (transCard) {
+    const transVal = data.total_stories > 0 ? Math.round((data.active_stories / data.total_stories) * 100) : 0;
+    transCard.querySelector('.stat-value').textContent = transVal + '%';
+  }
+
+  // 重新渲染相关图表
+  if (typeof updateDashboardChartsWithRealData === 'function') {
+    updateDashboardChartsWithRealData(data);
+  }
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', function() {
+  initInnovationRadarChart();
+  initEfficiencyTrendChart();
+  loadDashboardRealData();
+});
+</script>
+
 </body>
 </html>

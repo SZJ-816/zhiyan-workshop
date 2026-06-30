@@ -3,8 +3,8 @@ import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    APP_NAME: str = "禅道项目管理系统"
-    APP_VERSION: str = "2.0.0"
+    APP_NAME: str = "智研工坊 - 科技创新研发效能平台"
+    APP_VERSION: str = "3.0.0"
     
     # 数据库
     DB_HOST: str = os.getenv("DB_HOST", "mysql")

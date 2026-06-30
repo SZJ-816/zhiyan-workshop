@@ -15,9 +15,14 @@ conn = pymysql.connect(
     user='zentao',
     password='zentao123',
     database='zentao',
-    charset='utf8mb4'
+    charset='utf8mb4',
+    init_command="SET NAMES utf8mb4"
 )
 cur = conn.cursor()
+
+# 确保连接使用正确的字符集
+cur.execute("SET NAMES utf8mb4")
+conn.commit()
 
 # ==================== 数据定义 ====================
 

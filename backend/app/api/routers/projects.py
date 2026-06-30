@@ -65,6 +65,32 @@ def update_project(project_id: int, data: dict, db: Session = Depends(get_db), c
     db.commit()
     return {"success": True}
 
+# ===== 全部任务（放在 /{project_id}/tasks 之前，避免路径冲突）=====
+@router.get("/tasks")
+def list_all_tasks(
+    project_id: Optional[int] = None,
+    status: Optional[str] = None,
+    assigned_to: Optional[int] = None,
+    page: int = Query(1, ge=1), page_size: int = Query(50, ge=1, le=200),
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    q = db.query(Task)
+    if project_id: q = q.filter(Task.project_id == project_id)
+    if status: q = q.filter(Task.status == status)
+    if assigned_to: q = q.filter(Task.assigned_to == assigned_to)
+    total = q.count()
+    items = q.order_by(Task.priority.desc(), Task.id.desc()).offset((page-1)*page_size).limit(page_size).all()
+    result = []
+    for t in items:
+        d = TaskOut.model_validate(t).model_dump()
+        if t.assigned_to:
+            u = db.query(User).filter(User.id == t.assigned_to).first()
+            d["assignee_name"] = u.realname if u else ""
+        d["project_name"] = t.project.name if t.project else ""
+        result.append(d)
+    return {"success": True, "items": result, "total": total, "page": page, "page_size": page_size}
+
 # ===== 任务管理 =====
 @router.get("/{project_id}/tasks")
 def list_tasks(

@@ -5,6 +5,7 @@ const API_BASE = '/api';
 let currentUser = null;
 let currentPage = '';
 let token = localStorage.getItem('zentao_token');
+let projectTaskFilter = null;   // 当前筛选项目ID，null=全部
 
 // ===== API 客户端 =====
 async function api(path, options = {}) {
@@ -80,7 +81,7 @@ function showLogin() {
     <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--bg-sidebar),#312e81);padding:20px">
       <div style="background:var(--bg-card);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:24px;padding:48px 40px;width:100%;max-width:420px;box-shadow:0 25px 60px rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.1)">
         <div style="text-align:center;margin-bottom:32px">
-          <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px">🏯</div>
+          <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px"><svg style="width:28px;height:28px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/><path d="M9 11h6"/></svg></div>
           <h1 style="font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.5px">禅道项目管理系统</h1>
           <p style="color:var(--text-muted);font-size:14px;margin-top:4px">Zentao Project Management</p>
         </div>
@@ -164,12 +165,12 @@ async function loadDashboard() {
     
     // 统计卡片
     document.getElementById('statsGrid').innerHTML = `
-      <div class="stat-card"><div class="stat-icon" style="background:rgba(99,102,241,0.12);color:var(--primary)">📁</div><div class="stat-value">${d.total_projects}</div><div class="stat-label">项目总数</div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:rgba(34,197,94,0.12);color:var(--success)">✅</div><div class="stat-value">${d.total_tasks}</div><div class="stat-label">任务总数 · ${d.active_tasks} 进行中</div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:rgba(239,68,68,0.12);color:var(--danger)">🐛</div><div class="stat-value">${d.total_bugs}</div><div class="stat-label">Bug总数 · ${d.active_bugs} 待处理</div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:rgba(245,158,11,0.12);color:var(--warning)">📋</div><div class="stat-value">${d.my_tasks || 0}</div><div class="stat-label">我的待办 · ${d.my_bugs || 0} Bug</div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:rgba(59,130,246,0.12);color:var(--info)">📝</div><div class="stat-value">${d.total_stories}</div><div class="stat-label">用户需求 · ${d.active_stories} 活跃</div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6">👥</div><div class="stat-value">${d.total_users}</div><div class="stat-label">团队成员</div></div>`;
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(99,102,241,0.12);color:var(--primary)"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div><div class="stat-value">${d.total_projects}</div><div class="stat-label">项目总数</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(34,197,94,0.12);color:var(--success)"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-value">${d.total_tasks}</div><div class="stat-label">任务总数 · ${d.active_tasks} 进行中</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(239,68,68,0.12);color:var(--danger)"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="9" rx="7" ry="5"/><path d="M9 14c0 2 1.3 3 3 3s3-1 3-3"/><circle cx="9" cy="8" r="1" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/></svg></div><div class="stat-value">${d.total_bugs}</div><div class="stat-label">Bug总数 · ${d.active_bugs} 待处理</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(245,158,11,0.12);color:var(--warning)"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div><div class="stat-value">${d.my_tasks || 0}</div><div class="stat-label">我的待办 · ${d.my_bugs || 0} Bug</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(59,130,246,0.12);color:var(--info)"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="stat-value">${d.total_stories}</div><div class="stat-label">用户需求 · ${d.active_stories} 活跃</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><div class="stat-value">${d.total_users}</div><div class="stat-label">团队成员</div></div>`;
     
     // 项目进度图
     renderProjectChart(d.project_progress || []);
@@ -226,7 +227,7 @@ function renderWeeklyChart(data) {
 function renderBugChart(data) {
   const el = document.getElementById('chartBug');
   if (!el) return;
-  if (!Object.keys(data).length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div>暂无数据</div>'; return; }
+  if (!Object.keys(data).length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>暂无数据</div>'; return; }
   const chart = echarts.init(el);
   const colors = { '致命': '#ef4444', '严重': '#f97316', '一般': '#f59e0b', '轻微': '#3b82f6', '建议': '#22c55e' };
   chart.setOption({
@@ -242,7 +243,7 @@ function renderBugChart(data) {
 function renderActivity(data) {
   const el = document.getElementById('activityList');
   if (!el) return;
-  if (!data.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>暂无动态</div>'; return; }
+  if (!data.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>暂无动态</div>'; return; }
   el.innerHTML = data.map(a => `
     <div class="activity-item">
       <div class="activity-dot"></div>
@@ -257,14 +258,14 @@ function renderActivity(data) {
 function renderTopBar(title, breadcrumb) {
   return `<div class="top-bar">
     <div class="top-bar-left">
-      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       <div>
         <div class="page-title">${title}</div>
         <div class="breadcrumb">${breadcrumb}</div>
       </div>
     </div>
     <div class="top-bar-right">
-      <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle"><svg style="width:16px;height:16px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></button>
     </div>
   </div>`;
 }
@@ -297,7 +298,7 @@ async function loadProjects(status = '') {
     const res = await api(url);
     const items = res.items || [];
     if (!items.length) {
-      document.getElementById('projectList').innerHTML = '<div class="empty-state"><div class="empty-icon">📁</div>暂无项目</div>';
+      document.getElementById('projectList').innerHTML = '<div class="empty-state"><div class="empty-icon"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>暂无项目</div>';
       return;
     }
     const statusMap = { waiting: '待启动', doing: '进行中', suspended: '已暂停', closed: '已关闭', done: '已完成' };
@@ -308,7 +309,7 @@ async function loadProjects(status = '') {
           <thead><tr><th>项目名称</th><th>项目代号</th><th>状态</th><th>进度</th><th>任务(完成/总数)</th><th>日期</th><th>操作</th></tr></thead>
           <tbody>${items.map(p => `
             <tr>
-              <td style="font-weight:600;cursor:pointer;color:var(--primary)" onclick="navigate('tasks');projectTaskFilter=${p.id};setTimeout(()=>{showTasks();projectTaskFilter=null},100)">${p.name}</td>
+              <td style="font-weight:600;cursor:pointer;color:var(--primary)" onclick="projectTaskFilter=${p.id};navigate('tasks')">${p.name}</td>
               <td style="color:var(--text-muted);font-size:12px">${p.code}</td>
               <td><span class="badge badge-${statusClass[p.status]||'info'}">${statusMap[p.status]||p.status}</span></td>
               <td>
@@ -365,13 +366,13 @@ async function showTasks() {
   app.innerHTML = pageWrapper('任务管理', '项目 / 任务列表', `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
       <div class="filter-bar" id="taskFilters">
-        <span class="filter-chip active" data-filter="all" onclick="loadTasks('',this)">全部</span>
+        <span class="filter-chip ${!projectTaskFilter?'active':''}" data-filter="all" onclick="projectTaskFilter=null;loadTasks('',this)">全部项目</span>
         <span class="filter-chip" data-filter="todo" onclick="loadTasks('todo',this)">待办</span>
         <span class="filter-chip" data-filter="doing" onclick="loadTasks('doing',this)">进行中</span>
         <span class="filter-chip" data-filter="done" onclick="loadTasks('done',this)">已完成</span>
       </div>
       <div style="display:flex;gap:8px">
-        <div class="search-box"><span>🔍</span><input id="taskSearch" placeholder="搜索任务..." onkeyup="searchTasks()"></div>
+        <div class="search-box"><span><svg style="width:14px;height:14px;margin-right:4px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input id="taskSearch" placeholder="搜索任务..." onkeyup="searchTasks()"></div>
         <button class="btn btn-primary" onclick="openTaskModal()">+ 新建任务</button>
       </div>
     </div>
@@ -386,21 +387,27 @@ async function loadTasks(status = '', triggerEl = null) {
     triggerEl.classList.add('active');
   }
   try {
-    let url = '/projects/1/tasks?page_size=200';
+    // 优先用 projectTaskFilter，否则拉全部任务
+    let url = projectTaskFilter
+      ? `/projects/${projectTaskFilter}/tasks?page_size=200`
+      : '/projects/tasks?page_size=200';
     if (status && status !== 'all') url += '&status=' + status;
     const res = await api(url);
     renderTasks(res);
   } catch (e) {
-    document.getElementById('taskList').innerHTML = `<div class="loading">❌ ${e.message}</div>`;
+    const el = document.getElementById('taskList');
+    if (el) el.innerHTML = `<div class="loading">❌ ${e.message}</div>`;
   }
 }
 
 function renderTasks(res) {
   const items = res.items || [];
+  const showProject = !projectTaskFilter;
+
   const counts = res.status_counts || {};
   
   // 状态条
-  const statusMap = { todo: '📋 待办', doing: '🔄 进行中', done: '✅ 已完成', closed: '🔒 已关闭' };
+  const statusMap = { todo: '待办', doing: '进行中', done: '已完成', closed: '已关闭' };
   document.getElementById('taskStatusBar').innerHTML = Object.entries(statusMap).map(([k, v]) => `
     <div style="flex:1;background:var(--bg-glass);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer" onclick="loadTasks('${k}',null)">
       <div style="font-size:20px;font-weight:700;color:var(--text)">${counts[k] || 0}</div>
@@ -408,7 +415,7 @@ function renderTasks(res) {
     </div>`).join('');
   
   if (!items.length) {
-    document.getElementById('taskList').innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div>暂无任务</div>';
+    document.getElementById('taskList').innerHTML = '<div class="empty-state"><div class="empty-icon"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div>暂无任务</div>';
     return;
   }
   
@@ -416,13 +423,19 @@ function renderTasks(res) {
   const statusBadge = { todo: 'warning', doing: 'info', done: 'success', closed: 'success' };
   const statusText = { todo: '待办', doing: '进行中', done: '已完成', closed: '已关闭' };
   
+  const thExtra = showProject ? '<th>所属项目</th>' : '';
+  const rowExtra = (t) => showProject
+    ? `<td style="font-size:12px;color:var(--text-muted)">${t.project_name||''}</td>`
+    : '';
+  
   document.getElementById('taskList').innerHTML = `
     <div class="table-wrapper">
       <table>
-        <thead><tr><th>任务名称</th><th>优先级</th><th>状态</th><th>负责人</th><th>工时(预估/已耗)</th><th>截止日期</th><th>操作</th></tr></thead>
+        <thead><tr><th>任务名称</th>${thExtra}<th>优先级</th><th>状态</th><th>负责人</th><th>工时(预估/已耗)</th><th>截止日期</th><th>操作</th></tr></thead>
         <tbody>${items.map(t => `
           <tr>
             <td style="font-weight:500">${t.name}</td>
+            ${rowExtra(t)}
             <td><span class="badge badge-${t.priority==='high'?'danger':t.priority==='medium'?'warning':'info'}">${priorityMap[t.priority]||t.priority}</span></td>
             <td><span class="badge badge-${statusBadge[t.status]}">${statusText[t.status]||t.status}</span></td>
             <td style="font-size:13px">${t.assignee_name||'<span style="color:var(--text-muted)">未分配</span>'}</td>
@@ -439,9 +452,9 @@ function renderTasks(res) {
 
 window.updateTaskStatus = async function(id, status) {
   try {
-    await api(`/projects/tasks/${id}`, { method: 'PUT', body: JSON.stringify({ status }) });
+    await api(`/tasks/${id}`, { method: 'PUT', body: JSON.stringify({ status }) });
     loadTasks();
-  } catch (e) { alert(e.message); }
+  } catch (e) { showToast('操作失败: ' + e.message, 'error'); }
 };
 
 window.openTaskModal = async function() {
@@ -466,9 +479,19 @@ window.openTaskModal = async function() {
     </div>`);
 };
 
+// ===== Toast 通知 =====
+function showToast(msg, type = 'success') {
+  const colors = { success: '#22c55e', error: '#ef4444', warn: '#f59e0b', info: '#3b82f6' };
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;top:20px;right:20px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:${colors[type]||colors.success};box-shadow:0 4px 16px rgba(0,0,0,.2);animation:fadeIn .3s ease;opacity:1;transition:opacity .3s`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2500);
+}
+
 window.createTask = async function() {
   const projectId = document.getElementById('taskProject').value;
-  if (!projectId) { alert('请选择项目'); return; }
+  if (!projectId) { showToast('请选择项目', 'warn'); return; }
   const data = {
     name: document.getElementById('taskName').value,
     project_id: parseInt(projectId),
@@ -477,12 +500,15 @@ window.createTask = async function() {
     deadline: document.getElementById('taskDeadline').value || null,
     description: document.getElementById('taskDesc').value || ''
   };
-  if (!data.name) { alert('任务名称必填'); return; }
+  if (!data.name) { showToast('任务名称必填', 'warn'); return; }
   try {
     await api(`/projects/${projectId}/tasks`, { method: 'POST', body: JSON.stringify(data) });
     closeModal();
+    showToast('任务创建成功');
+    // 切换到对应项目的任务列表
+    projectTaskFilter = parseInt(projectId);
     loadTasks();
-  } catch (e) { alert('创建失败: ' + e.message); }
+  } catch (e) { showToast('创建失败: ' + e.message, 'error'); }
 };
 
 // ===== 产品管理 =====
@@ -496,7 +522,7 @@ async function showProducts() {
     const res = await api('/products?page_size=100');
     const items = res.items || [];
     if (!items.length) {
-      document.getElementById('productList').innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div>暂无产品</div>';
+      document.getElementById('productList').innerHTML = '<div class="empty-state"><div class="empty-icon"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8V3l-4 5h8l-4-5"/></svg></div>暂无产品</div>';
     } else {
       document.getElementById('productList').innerHTML = items.map(p => `
         <div class="card" style="margin-bottom:12px">
@@ -568,7 +594,7 @@ window.filterBugs = function(filter, el) {
 
 function renderBugs(res) {
   const items = res.items || [];
-  if (!items.length) { document.getElementById('bugList').innerHTML = '<div class="empty-state"><div class="empty-icon">🐛</div>暂无Bug</div>'; return; }
+  if (!items.length) { document.getElementById('bugList').innerHTML = '<div class="empty-state"><div class="empty-icon"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="9" rx="7" ry="5"/><path d="M9 14c0 2 1.3 3 3 3s3-1 3-3"/><circle cx="9" cy="8" r="1" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/></svg></div>暂无Bug</div>'; return; }
   const sevMap = { fatal: '致命', serious: '严重', normal: '一般', minor: '轻微' };
   const sevBadge = { fatal: 'danger', serious: 'danger', normal: 'warning', minor: 'info' };
   const statusBadge = { active: 'danger', resolved: 'success', closed: 'success' };
@@ -636,7 +662,7 @@ async function showUsers() {
     const items = res.items || [];
     const roleMap = { admin: '管理员', pm: '项目经理', dev: '开发', qa: '测试', po: '产品' };
     if (!items.length) {
-      document.getElementById('userList').innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div>暂无用户</div>';
+      document.getElementById('userList').innerHTML = '<div class="empty-state"><div class="empty-icon"><svg class="stat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>暂无用户</div>';
     } else {
       document.getElementById('userList').innerHTML = `
         <div class="table-wrapper"><table>
@@ -726,23 +752,22 @@ function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme');
   const next = current === 'dark' ? '' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
-  document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️' : '🌙';
+  document.getElementById('themeToggle').textContent = next === 'dark' ? '<svg style="width:16px;height:16px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' : '<svg style="width:16px;height:16px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
   localStorage.setItem('zentao_theme', next);
 }
 
 // ===== 搜索 =====
 window.searchTasks = function() {
-  // 搜索延迟
   clearTimeout(window._searchTimer);
   window._searchTimer = setTimeout(async () => {
     const val = document.getElementById('taskSearch').value.trim();
     if (!val) { loadTasks(); return; }
-    // 简单前端过滤
     try {
-      const res = await api('/projects/1/tasks?page_size=200&status=all');
+      const url = projectTaskFilter ? `/projects/${projectTaskFilter}/tasks?page_size=200` : '/tasks?page_size=200';
+      const res = await api(url);
       const filtered = (res.items||[]).filter(t => t.name.includes(val));
       renderTasks({ items: filtered, status_counts: res.status_counts });
-    } catch(e) {}
+    } catch(e) { showToast('搜索失败: ' + e.message, 'error'); }
   }, 300);
 };
 
@@ -751,7 +776,7 @@ function init() {
   // 主题
   const saved = localStorage.getItem('zentao_theme');
   if (saved) { document.documentElement.setAttribute('data-theme', saved); }
-  document.getElementById('themeToggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  document.getElementById('themeToggle').textContent = saved === 'dark' ? '<svg style="width:16px;height:16px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' : '<svg style="width:16px;height:16px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
   
   // 侧边栏导航
   document.querySelectorAll('.nav-item').forEach(item => {

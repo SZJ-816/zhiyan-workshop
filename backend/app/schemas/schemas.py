@@ -143,7 +143,7 @@ class BugOut(BaseModel):
     id: int
     title: str
     severity: str
-    priority: int
+    priority: Optional[int] = None
     status: str
     product_id: Optional[int] = None
     project_id: Optional[int] = None
